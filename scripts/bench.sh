@@ -17,24 +17,46 @@ pid=$(adbs shell pidof "$PKG_UNDER_TEST" | tr -d '\r')
 [ -n "$pid" ] || { echo "$PKG_UNDER_TEST is not running"; exit 1; }
 
 # The layer name SurfaceFlinger knows this app's window by.
-# "Background for ..." is a solid-colour layer behind the real one and never
-# presents a frame; picking it reports a convincing zero for an app that is
-# rendering perfectly well.
-layer=$(adbs shell dumpsys SurfaceFlinger --list 2>/dev/null | tr -d '\r' \
-        | grep -i "$PKG_UNDER_TEST" | grep -v 'Background for' | grep -iE 'SurfaceView|BLAST' | tail -1)
-[ -n "$layer" ] || layer=$(adbs shell dumpsys SurfaceFlinger --list 2>/dev/null | tr -d '\r' | grep -i "$PKG_UNDER_TEST" | grep -v 'Background for' | tail -1)
-[ -n "$layer" ] || { echo "no SurfaceFlinger layer for $PKG_UNDER_TEST"; exit 1; }
+# Two traps here, both of which report a convincing zero for an app that is
+# rendering perfectly well:
+#
+#  1. "Background for ..." is a solid-colour layer behind the real one and
+#     never presents a frame of its own.
+#  2. --list wraps each name in a RequestedLayerState{...} envelope with a
+#     trailing parentId, but --latency wants the bare name INCLUDING its
+#     leading hex id. Hand it the envelope and it silently matches nothing.
+# The (BLAST) child is the one frames are queued to; its parent SurfaceView
+# layer carries no frame history at all. Prefer the child, and note that both
+# get new ids every time the surface is recreated, so this has to be resolved
+# fresh on each run rather than remembered.
+all=$(adbs shell dumpsys SurfaceFlinger --list 2>/dev/null | tr -d '\r' \
+        | grep -i "$PKG_UNDER_TEST" | grep -v 'Background for')
+raw=$(printf '%s\n' "$all" | grep -F '(BLAST)' | tail -1)
+[ -n "$raw" ] || raw=$(printf '%s\n' "$all" | grep -i 'SurfaceView' | tail -1)
+[ -n "$raw" ] || raw=$(printf '%s\n' "$all" | tail -1)
+[ -n "$raw" ] || { echo "no SurfaceFlinger layer for $PKG_UNDER_TEST"; exit 1; }
+layer=$(printf '%s' "$raw" | sed -E 's/^RequestedLayerState\{//; s/\}$//; s/ parentId=[0-9]+.*$//')
+
+# A layer that answers with nothing but a refresh period is the wrong one.
+probe=$(adbs shell "dumpsys SurfaceFlinger --latency '$layer'" 2>/dev/null | tr -d '\r' | grep -c '[0-9]')
+if [ "${probe:-0}" -lt 2 ]; then
+  echo "   NOTE: this layer has no frame history yet; a zero below is not evidence of a freeze"
+fi
 
 echo "== $LABEL"
 echo "   layer: $layer"
 echo "   sampling ${SECS}s - play normally now"
 
-adbs shell dumpsys SurfaceFlinger --latency-clear "$layer" >/dev/null 2>&1
+# The layer name contains spaces, so it has to be quoted for the shell ON THE
+# DEVICE. Passing it as a separate argument to `adb shell` lets adb rejoin the
+# argv with spaces and the device shell then splits it into words again, which
+# matches no layer and reports zero frames for an app that is rendering.
+adbs shell "dumpsys SurfaceFlinger --latency-clear '$layer'" >/dev/null 2>&1
 start_cpu=$(adbs shell cat /proc/$pid/stat 2>/dev/null | awk '{print $14+$15}')
 sleep "$SECS"
 end_cpu=$(adbs shell cat /proc/$pid/stat 2>/dev/null | awk '{print $14+$15}')
 
-adbs shell dumpsys SurfaceFlinger --latency "$layer" 2>/dev/null | tr -d '\r' > /tmp/bench_latency.txt
+adbs shell "dumpsys SurfaceFlinger --latency '$layer'" 2>/dev/null | tr -d '\r' > /tmp/bench_latency.txt
 mem=$(adbs shell dumpsys meminfo "$PKG_UNDER_TEST" 2>/dev/null | tr -d '\r' | grep -E 'TOTAL PSS' | head -1)
 therm=$(adbs shell dumpsys thermalservice 2>/dev/null | tr -d '\r' | grep -iE 'Temperature\{.*type=SKIN|mStatus' | head -2)
 ticks=$(adbs shell getconf CLK_TCK 2>/dev/null | tr -d '\r'); ticks=${ticks:-100}

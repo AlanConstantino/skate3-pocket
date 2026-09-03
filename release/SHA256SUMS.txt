@@ -1,1 +1,1 @@
-ee561a739111f0178286fd23fbbe554c7fdbf2692db1a496f575b064f6f6ff37  release/Skate3-Android-0.1.0-arm64.apk
+6d805ad3cfd135f1934179ccd80c2595b525893c434ce4e5d6418c61ce4dd28f  Skate3-Android-0.1.1-arm64.apk
