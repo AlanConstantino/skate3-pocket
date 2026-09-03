@@ -1,0 +1,29 @@
+# Spends the headroom this phone has over the ones the defaults were tuned on.
+# Everything here was switched off for a 4 GB device with a much smaller GPU,
+# not because it looks bad.
+#
+# Turn these on ONE AT A TIME against diagnostics.txt. Shadows and ambient
+# occlusion each carry their own full-screen target, and 2x MSAA doubles every
+# multisampled attachment - on a tile GPU that is bandwidth, which is the thing
+# a phone has least of.
+#
+# The one that is not free in memory: the shadow atlas at 2048 is 16 MB against
+# 4 MB at 1024.
+
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+
+skate3_native_render_scene_ssao=true
+skate3_native_render_scene_bloom=true
+skate3_native_render_scene_shadow_static_size=2048
+skate3_native_render_scene_msaa=2
+
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=384
+skate3_native_render_scene_mesh_store_mb=256
+texture_cache_memory_limit_soft=384
+texture_cache_memory_limit_hard=512
+gpu_wait_reg_mem_timeout_ms=20

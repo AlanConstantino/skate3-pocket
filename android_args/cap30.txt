@@ -1,0 +1,19 @@
+# Half rate: an exact 2:1 cadence on a 60 Hz panel, so every frame is shown for
+# exactly two refreshes. That reads as locked where an unstable 45 reads as
+# judder, and it is the configuration to fall back to if the phone cannot hold
+# 60 once it is warm.
+#
+# Watch for the shape rather than the average: p50 holding steady while p95
+# climbs is memory pressure or throttling, not the renderer getting slower.
+
+skate3_guest_fps_cap=30
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+gpu_wait_reg_mem_timeout_ms=20

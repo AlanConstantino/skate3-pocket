@@ -1,0 +1,28 @@
+# The defaults plus the instruments. This is the file to push when something
+# needs explaining rather than playing.
+#
+# skate3_diagnostics raises the log level and turns the per-frame accounting
+# back on. That accounting is not free - it runs whether or not a line is ever
+# printed, which is why it ships off - so take the frame rate here as a floor,
+# not as the number to quote.
+#
+# What to read afterwards, with scripts/perf.sh:
+#   [pace]    fps, p50, p95, max over the window. The p95 is the honest one.
+#   [cp-sum]  command-processor waits and abandons.
+#   the Performance page (Start+Select) names the limiter directly:
+#             frame cap / display sync / graphics card / emulation (CPU).
+
+skate3_diagnostics=true
+
+skate3_native_render_scene=true
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+gpu_wait_reg_mem_timeout_ms=20

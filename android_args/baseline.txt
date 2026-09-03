@@ -1,0 +1,39 @@
+# The compiled-in Android defaults, written out. Pushing this file changes
+# nothing - it exists so the starting point is visible in one place, and as
+# something to copy and edit.
+#
+# Rationale for each value is in BuildAndroidArguments,
+# third_party/rexglue-sdk/src/ui/windowed_app_main_sdl.cpp.
+
+skate3_native_render_scene=true
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+
+# The emulated Xenos passes the native renderer has already replaced. Every
+# one of them is a tile load/store on Adreno, exactly as on Apple's GPU.
+native_render_suppress_mode=1
+
+# The console's own draw radius. The engine default is 2.0, which is four
+# times the world area streaming and is what makes movement hitch.
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+texture_cache_memory_limit_soft_lifetime=30
+texture_cache_memory_limit_render_to_texture=24
+
+resolution_scale=1
+skate3_native_render_scene_msaa=1
+skate3_native_render_scene_shadow_static_size=1024
+skate3_native_render_scene_shadow_pcss=false
+skate3_native_render_scene_ssao=false
+skate3_native_render_scene_bloom=false
+skate3_native_render_scene_shafts=false
+
+gpu_wait_reg_mem_timeout_ms=20
+audio_device_channels=2
+audio_device_sample_frames=512
