@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import org.libsdl.app.SDLActivity
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 /**
  * The game itself.
@@ -107,72 +105,34 @@ class Skate3Activity : SDLActivity() {
 
     // ---- Called from native code (see src/skate3_android_bridge.cpp) -------
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != REQUEST_PICK_DOCUMENT) return
-        pickedFd = if (resultCode == Activity.RESULT_OK && data?.data != null) {
-            openDescriptor(data)
-        } else {
-            -1
-        }
-        pickLatch?.countDown()
-    }
-
-    private fun openDescriptor(data: Intent): Int = try {
-        val uri = data.data!!
-        // detachFd hands the descriptor to the process: it stays open after
-        // the ParcelFileDescriptor is collected, which is what lets the native
-        // side read it as /proc/self/fd/<n> for as long as it needs.
-        contentResolver.openFileDescriptor(uri, "r")?.detachFd() ?: -1
-    } catch (e: Exception) {
-        Log.e(TAG, "could not open the picked document", e)
-        -1
-    }
-
     companion object {
         private const val TAG = "skate3"
         const val EXTRA_ARGUMENTS = "com.nakas.skate3.ARGUMENTS"
-        private const val REQUEST_PICK_DOCUMENT = 0x5343
 
         @Volatile private var instance: Skate3Activity? = null
-        @Volatile private var pickedFd: Int = -1
-        @Volatile private var pickLatch: CountDownLatch? = null
 
         /**
-         * Shows the system document picker and blocks until the player chooses
-         * or cancels. Returns a file descriptor this process now owns, or -1.
+         * Refuses, deliberately, and says why.
          *
-         * Called from the SDL thread, never from the main thread: it waits for
-         * the result the main thread delivers.
+         * This used to open the system picker and block the calling thread
+         * until the player chose. That thread is the one SDL runs the whole
+         * game on, and opening the picker pauses this activity and destroys
+         * its rendering surface - so the event that would release that surface
+         * could never be handled, because the thread that handles it was the
+         * one waiting. The renderer was left holding a window Android had
+         * already freed, and the app died at the moment the picker appeared.
+         * Reported from the field on more than one device.
+         *
+         * Files are chosen in SetupActivity now, before the game starts, where
+         * there is no surface to lose and no thread to block. The engine
+         * receives the choice as --skate3_install_iso / --skate3_install_tu.
+         * Returning -1 makes it report that nothing was selected, which is
+         * true and is a far better outcome than the crash.
          */
         @JvmStatic
         fun pickDocument(title: String): Int {
-            val activity = instance ?: return -1
-            val latch = CountDownLatch(1)
-            pickLatch = latch
-            pickedFd = -1
-            activity.runOnUiThread {
-                try {
-                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_TITLE, title)
-                    }
-                    activity.startActivityForResult(
-                        Intent.createChooser(intent, title), REQUEST_PICK_DOCUMENT
-                    )
-                } catch (e: Exception) {
-                    Log.e(TAG, "could not show the document picker", e)
-                    latch.countDown()
-                }
-            }
-            // Bounded so a picker that never returns cannot wedge the game
-            // thread for the rest of the session.
-            if (!latch.await(10, TimeUnit.MINUTES)) {
-                Log.w(TAG, "document picker timed out")
-                return -1
-            }
-            return pickedFd
+            Log.w(TAG, "in-game document picker declined ($title); files are chosen on the setup screen")
+            return -1
         }
 
         /**

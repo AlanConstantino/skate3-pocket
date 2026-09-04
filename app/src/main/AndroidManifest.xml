@@ -56,7 +56,21 @@
             </intent-filter>
         </activity>
 
-        <!-- Applying a setting that needs a restart: this runs in its own
+<!-- Lets a diagnostic report be attached to a message. The logs live
+             under Android/data, which recent Android versions will not let a
+             file manager open, so a content URI is the only way a player can
+             hand one over. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.reports"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+                <!-- Applying a setting that needs a restart: this runs in its own
              process, so it survives the game process exiting and can start it
              again. -->
         <activity

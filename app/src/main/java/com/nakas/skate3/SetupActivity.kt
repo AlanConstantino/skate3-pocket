@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.core.content.FileProvider
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +32,7 @@ class SetupActivity : Activity() {
     private lateinit var status: TextView
     private lateinit var playButton: Button
     private lateinit var titleUpdateButton: Button
+    private lateinit var pickTitleUpdateButton: Button
     @Volatile private var busy = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,10 +82,13 @@ class SetupActivity : Activity() {
         }
         playButton = button("Play") { startGame() }
         actions.addView(playButton)
-        actions.addView(button("Install from a disc image…") { startGame() })
+        actions.addView(button("Install from a disc image…") { pick(REQUEST_ISO) })
         titleUpdateButton = button("Download title update") { downloadTitleUpdate() }
         actions.addView(titleUpdateButton)
+        pickTitleUpdateButton = button("Pick the title update file…") { pick(REQUEST_TU) }
+        actions.addView(pickTitleUpdateButton)
         actions.addView(button("Copy the details") { copyDiagnostics() })
+        actions.addView(button("Save a diagnostic report") { saveReport() })
         root.addView(ScrollView(this).apply { addView(actions) },
             LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f))
 
@@ -106,6 +112,7 @@ class SetupActivity : Activity() {
         val tu = GameData.isTitleUpdateInstalled(this)
         // Only worth offering while it is the missing piece.
         titleUpdateButton.visibility = if (tu) View.GONE else View.VISIBLE
+        pickTitleUpdateButton.visibility = if (tu) View.GONE else View.VISIBLE
         status.text = buildString {
             appendLine(if (ready) "Ready to play." else "The game's own files are not here yet.")
             appendLine()
@@ -179,12 +186,68 @@ class SetupActivity : Activity() {
     }
 
     /**
-     * Both buttons do the same thing, and the difference is only what the
-     * player is about to see: the engine notices for itself that the game
-     * files are missing and shows its own installer, which reaches the system
-     * document picker through the activity. Duplicating that check here in
-     * Kotlin would be a second thing to keep true.
+     * Picks a file here, on the launcher, rather than from inside the running
+     * game.
+     *
+     * The engine has its own installer that used to call back into the game
+     * activity to show this picker, and on several devices the app died the
+     * instant the picker appeared. The reason is structural: that call blocked
+     * the thread SDL runs the game on, and showing the picker pauses the game
+     * activity and destroys its rendering surface, so the event that releases
+     * that surface could never be handled - the thread that handles it was the
+     * one waiting for the picker. The renderer kept using a window Android had
+     * freed.
+     *
+     * Here there is no surface to lose and no thread to block. The choice is
+     * handed to the engine as a command-line argument instead, which is the
+     * same path the desktop builds use.
      */
+    private fun pick(request: Int) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+        }
+        val title = if (request == REQUEST_ISO) "Select the Skate 3 disc image"
+                    else "Select the title update file"
+        try {
+            startActivityForResult(Intent.createChooser(intent, title), request)
+        } catch (e: Exception) {
+            // No document provider at all: rare, but it is a plain message
+            // rather than a crash.
+            Log.e(TAG, "no document picker available", e)
+            status.text = "This device has no file picker available.\n\n" +
+                "Copy the file into\n${GameData.root(this).absolutePath}\nand try again."
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_ISO && requestCode != REQUEST_TU) return
+        val uri = data?.data
+        if (resultCode != RESULT_OK || uri == null) {
+            refresh()
+            return
+        }
+        // detachFd hands the descriptor to the process, so it outlives this
+        // activity and stays readable from the game as /proc/self/fd/<n>.
+        // Both activities run in the same process - see the manifest, only
+        // RestartActivity is given one of its own.
+        val fd = try {
+            contentResolver.openFileDescriptor(uri, "r")?.detachFd() ?: -1
+        } catch (e: Exception) {
+            Log.e(TAG, "could not open the selected file", e)
+            -1
+        }
+        if (fd < 0) {
+            status.text = "That file could not be opened.\n\n" +
+                "If it is on a USB drive or an SD card, try copying it to the " +
+                "device's own storage first."
+            return
+        }
+        val flag = if (requestCode == REQUEST_ISO) "skate3_install_iso" else "skate3_install_tu"
+        startGame(listOf("--$flag=/proc/self/fd/$fd"))
+    }
+
     private fun startGame(extraArgs: List<String> = emptyList()) {
         GameData.userDir(this).mkdirs()
         GameData.gameDir(this).mkdirs()
@@ -212,6 +275,55 @@ class SetupActivity : Activity() {
         (getSystemService(ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(info)
         val gb = info.totalMem.toDouble() / (1024 * 1024 * 1024)
         return if (gb >= 5.5) "performance" else "potato"
+    }
+
+    companion object {
+        private const val TAG = "skate3"
+        private const val REQUEST_ISO = 0x5301
+        private const val REQUEST_TU = 0x5302
+    }
+
+    /**
+     * Gathers the report and offers to send it. Written to the cache and
+     * shared through a content URI, because the folder the logs actually live
+     * in is under `Android/data`, which recent Android versions will not let
+     * a file manager or a messaging app open.
+     */
+    private fun saveReport() {
+        if (busy) return
+        busy = true
+        status.text = "Gathering the report…"
+        Thread {
+            val outcome = runCatching { Diagnostics.write(this) }
+            runOnUiThread {
+                busy = false
+                outcome.fold(
+                    onSuccess = { file -> shareReport(file) },
+                    onFailure = { e ->
+                        status.text = "The report could not be written.\n\n${e.message ?: e}"
+                    }
+                )
+            }
+        }.start()
+    }
+
+    private fun shareReport(file: File) {
+        status.text = "Report saved:\n${file.absolutePath}\n\n" +
+            String.format("%.1f KB. Send it with the report of the problem.", file.length() / 1024.0)
+        try {
+            val uri = FileProvider.getUriForFile(this, "$packageName.reports", file)
+            val send = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_SUBJECT, "Skate 3 for Android - diagnostic report")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(send, "Send the report"))
+        } catch (e: Exception) {
+            // The file is written either way, and the path is already on
+            // screen, so this is a downgrade rather than a failure.
+            Log.e(TAG, "could not share the report", e)
+        }
     }
 
     private fun copyDiagnostics() {

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Diagnostic reports only. Nothing else in the app is shareable, and in
+         particular the game data is deliberately not reachable from here. -->
+    <cache-path name="reports" path="reports/" />
+</paths>

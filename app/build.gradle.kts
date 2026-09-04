@@ -22,6 +22,12 @@ val sdlJavaDir = "$engineDir/third_party/rexglue-sdk/thirdparty/sdl3/android-pro
 
 android {
     namespace = "com.nakas.skate3"
+
+    // The diagnostic report names the version it was gathered from; without
+    // that a report from a stranger cannot be matched to a build.
+    buildFeatures {
+        buildConfig = true
+    }
     compileSdk = 35
     ndkVersion = "28.2.13676358"
 
@@ -31,8 +37,8 @@ android {
         // (27) for the audio backend, both of which the runtime needs.
         minSdk = 28
         targetSdk = 35
-        versionCode = 6
-        versionName = "0.1.5"
+        versionCode = 9
+        versionName = "0.1.8"
         ndk { abiFilters += "arm64-v8a" }
     }
 
