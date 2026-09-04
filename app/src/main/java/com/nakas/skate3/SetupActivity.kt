@@ -121,6 +121,15 @@ class SetupActivity : Activity() {
             appendLine()
             appendLine(GameData.gameDir(this@SetupActivity).absolutePath)
             appendLine(GameData.describeFree(this@SetupActivity))
+            if (GameData.usingInternalFallback(this@SetupActivity)) {
+                appendLine()
+                appendLine(
+                    "This device would not let the app create its folder in " +
+                        "shared storage, so the game is being kept in the app's " +
+                        "own private storage instead. It works, but a file " +
+                        "manager cannot see it and uninstalling removes it."
+                )
+            }
             if (!ready) {
                 appendLine()
                 appendLine(
@@ -251,8 +260,18 @@ class SetupActivity : Activity() {
     private fun startGame(extraArgs: List<String> = emptyList()) {
         GameData.userDir(this).mkdirs()
         GameData.gameDir(this).mkdirs()
+        val root = GameData.root(this)
         val args = buildList {
             addAll(extraArgs)
+            // Tell the engine where the files actually are rather than letting
+            // it work it out again. It asks SDL for the external files
+            // directory, which is the one that can be missing - and if the two
+            // sides disagree the game looks for a disc that was extracted
+            // somewhere else. The engine replaces its own default for a key the
+            // activity supplies, so these do not collide.
+            add("--game_data_root=${File(root, "game").absolutePath}")
+            add("--user_data_root=${File(root, "user").absolutePath}")
+            add("--log_file=${File(root, "skate3.log").absolutePath}")
             // Only on a first run: the engine writes its own settings after
             // that, and re-applying a preset every launch would silently undo
             // whatever was changed in the menu.

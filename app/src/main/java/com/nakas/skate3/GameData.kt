@@ -31,12 +31,45 @@ object GameData {
      * missing folder.
      */
     fun root(context: Context): File {
-        val dir = context.getExternalFilesDir(null) ?: context.filesDir
-        if (!dir.isDirectory) {
-            dir.mkdirs()
-        }
-        return dir
+        val external = usable(try { context.getExternalFilesDir(null) } catch (_: Exception) { null })
+        val internal = usable(context.filesDir)
+
+        // Whichever one already holds the game wins, and it is checked before
+        // anything else. External storage can be missing at one launch and
+        // back at the next, and silently changing roots underneath an existing
+        // 6 GB install would report the game as missing and ask for the disc
+        // image again.
+        external?.let { if (File(it, "game/default.xex").isFile) return it }
+        internal?.let { if (File(it, "game/default.xex").isFile) return it }
+
+        // Nothing installed yet: external by preference, because it is visible
+        // to a file manager and to adb, and is reclaimed on uninstall.
+        //
+        // The fallback is not theoretical. A LineageOS device reported the app
+        // unable to add any files, and the launcher was showing "free space
+        // unknown" - StatFs throwing because this directory did not exist and
+        // could not be created. Android/data is restricted ground on recent
+        // versions, and an app that cannot make its own folder there has no
+        // way to report it that means anything to the player. Internal storage
+        // always works; the engine is told which one was chosen, so both sides
+        // agree.
+        return external ?: internal ?: context.filesDir
     }
+
+    /** The directory if it exists or can be made, and can be written to. */
+    private fun usable(dir: File?): File? {
+        if (dir == null) return null
+        return try {
+            if (!dir.isDirectory) dir.mkdirs()
+            if (dir.isDirectory && dir.canWrite()) dir else null
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /** True when the game lives on internal storage because external failed. */
+    fun usingInternalFallback(context: Context): Boolean =
+        root(context).absolutePath.startsWith(context.filesDir.absolutePath)
 
     fun gameDir(context: Context): File = File(root(context), "game")
     fun userDir(context: Context): File = File(root(context), "user")

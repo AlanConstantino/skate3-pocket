@@ -3,6 +3,7 @@ package com.nakas.skate3
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.os.StatFs
 import java.io.File
 import java.text.SimpleDateFormat
@@ -55,8 +56,29 @@ object Diagnostics {
         appendLine()
 
         appendLine(section("Game files"))
+        // Where the folder is supposed to be, and every reason it might not be
+        // there. A device that cannot create its own directory under
+        // Android/data fails much later and somewhere misleading - the disc
+        // image is picked successfully and then has nowhere to be extracted to
+        // - so the state is recorded before anything depends on it.
+        val external = try {
+            context.getExternalFilesDir(null)
+        } catch (e: Exception) {
+            appendLine("getExternalFilesDir threw: ${e.message}")
+            null
+        }
+        appendLine("External storage state ${Environment.getExternalStorageState()}")
+        appendLine("Emulated ${Environment.isExternalStorageEmulated()}, " +
+            "removable ${Environment.isExternalStorageRemovable()}")
+        appendLine("getExternalFilesDir ${external?.absolutePath ?: "NULL - no external storage for this app"}")
+        if (external != null) {
+            appendLine("  exists ${external.isDirectory}, writable ${external.canWrite()}, " +
+                "mkdirs ${if (external.isDirectory) "not needed" else external.mkdirs().toString()}")
+        }
+        appendLine("Internal filesDir ${context.filesDir.absolutePath} " +
+            "(exists ${context.filesDir.isDirectory}, writable ${context.filesDir.canWrite()})")
         val root = GameData.root(context)
-        appendLine(root.absolutePath)
+        appendLine("In use: ${root.absolutePath}")
         appendLine("Folder exists ${root.isDirectory}, writable ${root.canWrite()}")
         appendLine("Disc files installed ${GameData.isGameInstalled(context)}")
         appendLine("Title update staged ${GameData.isTitleUpdateInstalled(context)}")
