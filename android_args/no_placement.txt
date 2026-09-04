@@ -1,3 +1,0 @@
-# Undo the thread pinning entirely: let the kernel schedule as it did in the
-# builds before v0.1.8. A/B reference for the placement regression.
---android_thread_placement_map=

@@ -1,5 +1,0 @@
-# Corrected placement for a three-cluster phone. The shipped build took only
-# the TOP cluster as "fast", which on an S23 FE is the single 2.99 GHz prime
-# core - so all six frame-critical threads landed on cpu7 and the three
-# 2.5 GHz cores went unused. Fast = everything above the little cluster.
---android_thread_placement_map=Main XThread=cpu:4+5+6+7;GPU Commands=cpu:4+5+6+7;render_thread=cpu:4+5+6+7;Kernel Dispatch=cpu:4+5+6+7;Audio Worker=cpu:4+5+6+7;RwAudioCore=cpu:4+5+6+7;XMA Decoder=cpu:0+1+2+3,nice:5;rwfilesys=cpu:0+1+2+3,nice:5;load_thread=cpu:0+1+2+3,nice:5;presence_thread=cpu:0+1+2+3,nice:10
