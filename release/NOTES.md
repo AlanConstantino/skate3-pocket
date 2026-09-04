@@ -42,6 +42,30 @@ Defaults are inherited from a 4 GB iPhone and are conservative for a recent
 phone. `quality.txt` spends that headroom on shadows, ambient occlusion and
 antialiasing. Change one setting at a time.
 
+## Fixed since the first builds
+
+Three separate reasons the app closed or refused to install, all found by
+people testing on hardware the author does not own.
+
+**It was built for one phone's CPU.** The recompiled game code carried ARMv8.3
+instructions, which fault on anything older - a Cortex-A78, A76 or A55, which
+is most Android hardware. The app closed the instant guest code ran, which
+looked like the setup buttons failing because each one starts the game. It now
+targets the common ARMv8 baseline and picks its atomics at run time, so recent
+phones keep the fast path and older ones still work.
+
+**It demanded GPU features it does not use.** Geometry shaders were required
+by the emulated pipeline this build replaces. Adreno has them; PowerVR and
+many Mali parts do not, and those devices exited during graphics setup.
+
+**It could not open a disc image from a USB drive.** The file picker returns an
+open descriptor; naming it by path and re-opening it fails for anything under
+system-only storage. It now reads the descriptor directly.
+
+Also fixed: the app's own folder is created wherever it is needed rather than
+only when starting the game, which is what made the title update download fail
+with a missing-file error and free space read as 0.0 GB.
+
 ## Known rough edges
 
 - Several on-screen buttons draw a question mark instead of a label. The touch
@@ -50,8 +74,12 @@ antialiasing. Change one setting at a time.
   refuses the real-time scheduler to apps; it is harmless.
 - It looks for a controller mapping database in a system path that does not
   exist on Android, and says so once.
-- Custom map packs are wired to the same locations the iOS build scans, but the
-  in-game picker has not been confirmed on a phone yet.
+- Custom map packs work. Drop a pack folder, the data file and its header
+  together, into the app's own folder alongside `game`. Confirmed on a phone
+  with two packs installed.
+- Suspending and resuming has been reported as freezing on at least one device.
+  It has not reproduced here across repeated background and resume cycles, so
+  if it happens to you the details are worth reporting.
 
 ## Building it yourself
 

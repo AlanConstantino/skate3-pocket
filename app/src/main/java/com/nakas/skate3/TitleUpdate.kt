@@ -41,6 +41,9 @@ object TitleUpdate {
     fun download(context: Context, url: String = DEFAULT_URL,
                  onProgress: (Long, Long) -> Unit = { _, _ -> }): File {
         val target = destination(context)
+        // The folder may not exist yet; writing the temporary file straight
+        // into it fails with ENOENT and looks like a network problem.
+        target.parentFile?.mkdirs()
         val partial = File(target.parentFile, target.name + ".part")
         partial.delete()
 

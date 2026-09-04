@@ -18,8 +18,25 @@ object GameData {
     /** The disc dump takes about 6 GB; refuse to start an install without room. */
     const val REQUIRED_FREE_BYTES = 7L * 1024 * 1024 * 1024
 
-    fun root(context: Context): File =
-        context.getExternalFilesDir(null) ?: context.filesDir
+    /**
+     * The app's own folder, created if it is not already there.
+     *
+     * getExternalFilesDir is documented to create the directory, and usually
+     * does, but it can hand back a path it did not create - external storage
+     * not mounted yet at the moment of the call, or the folder removed
+     * underneath the app by a file manager. Everything downstream then fails
+     * in a way that points somewhere else entirely: the title update download
+     * dies with ENOENT on its own temporary file, and the free-space reading
+     * throws and reports 0.0 GB, which reads as a full disk rather than a
+     * missing folder.
+     */
+    fun root(context: Context): File {
+        val dir = context.getExternalFilesDir(null) ?: context.filesDir
+        if (!dir.isDirectory) {
+            dir.mkdirs()
+        }
+        return dir
+    }
 
     fun gameDir(context: Context): File = File(root(context), "game")
     fun userDir(context: Context): File = File(root(context), "user")
@@ -41,16 +58,21 @@ object GameData {
     fun isReadyToPlay(context: Context): Boolean =
         isGameInstalled(context) && isTitleUpdateInstalled(context)
 
+    /** Free bytes where the game data goes, or -1 when it cannot be read. */
     fun freeBytes(context: Context): Long =
         try {
             val stat = StatFs(root(context).absolutePath)
             stat.availableBlocksLong * stat.blockSizeLong
         } catch (_: Exception) {
-            0L
+            // Distinguished from zero on purpose: "0.0 GB free" sends someone
+            // off deleting photos to solve a problem that is not about space.
+            -1L
         }
 
     fun describeFree(context: Context): String {
-        val gb = freeBytes(context).toDouble() / (1024 * 1024 * 1024)
+        val bytes = freeBytes(context)
+        if (bytes < 0) return "free space unknown"
+        val gb = bytes.toDouble() / (1024 * 1024 * 1024)
         return String.format("%.1f GB free", gb)
     }
 }
