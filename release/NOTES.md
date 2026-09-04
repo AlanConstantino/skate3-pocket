@@ -42,6 +42,66 @@ Defaults are inherited from a 4 GB iPhone and are conservative for a recent
 phone. `quality.txt` spends that headroom on shadows, ambient occlusion and
 antialiasing. Change one setting at a time.
 
+## New in this release
+
+**Settings you change now survive the session.** Every graphics row was being
+put back at the next launch - resolution, V-Sync, antialiasing, shadows,
+ambient occlusion, bloom, sun shafts, draw distance, the frame cap and the
+texture budget. The tuned values this build ships are applied first and the
+menu writes over them, rather than the other way round, so what you pick is
+what you get next time.
+
+
+**The app no longer dies when the file picker opens.** Two people reported it
+closing at the exact moment the picker appeared, on LineageOS and on stock
+Samsung, and it was neither of those: it was a deadlock in this app. The
+engine's installer asked the game activity to show the picker and waited for an
+answer, on the one thread SDL runs the whole game on. Opening the picker pauses
+that activity and Android destroys its rendering surface - and the event that
+releases the surface is handled on the same thread that was sitting there
+waiting. The renderer went on using a window Android had already freed.
+
+Files are chosen on the launcher screen now, before the engine starts, where
+there is no surface to lose and no thread to block. There is also a button to
+pick your own title update file, which went through the same broken path.
+
+**"Save a diagnostic report".** If something goes wrong, this gathers what is
+needed to work out why into one file you can attach to a message: the build
+version, the ROM fingerprint, the SoC, ABIs, per-core clocks, RAM, what is in
+the game folder, free space, the engine's log and its crash report, and the
+system log - which survives the crashed process, so a report gathered after a
+crash contains the crash. All of that normally lives under `Android/data`,
+which recent Android versions will not let a file manager open, so there was
+previously no way for anyone to hand it over.
+
+**The game's threads are placed on the fast CPU cores.** Phones split their
+cores into clusters at different clock ceilings, and the threads the frame
+depends on were landing wherever the scheduler happened to put them. The
+frame-critical threads now go to the faster cores and streaming and decoding go
+to the slower ones, out of the frame's way. The cluster layout is read from the
+device at startup rather than assumed, because it varies: a Galaxy S23 FE has
+three clusters - four cores at 1.79 GHz, three at 2.50 and a single 2.99 GHz
+core - and an earlier version of this that assumed the usual two put every
+frame-critical thread on that one prime core and left the 2.5 GHz cores idle.
+Measured after the fix on that phone: a locked 60.1 fps in gameplay, 16.66 ms
+at the 95th percentile, no frame over 20 ms.
+
+**A profile for devices under 4 GB of RAM**, selected automatically from the
+memory the device reports, so nothing larger is affected. It drops two mip
+levels from the biggest textures rather than one - sixteen times fewer bytes,
+and sixteen times less CPU spent expanding them on GPUs that cannot sample the
+compressed format at all - halves the draw distance, lets the texture and mesh
+stores go below the old 256 MB floor, bounds a lock spin that previously
+hammered a single cache line up to 65,280 times without yielding, and builds
+the guest's static-world draw packets every other frame. That last one is safe
+because the native renderer already discards them; they were simply the guest
+render thread's largest per-item cost.
+
+This is aimed at low-end phones and tablets generally. On the worst case to
+hand - a Galaxy Tab A7 Lite, eight in-order Cortex-A53s and 2.9 GB of RAM - it
+reaches gameplay but is still slow, and the honest summary is that the
+remaining limit there is the emulated game code itself.
+
 ## Fixed since the first builds
 
 Three separate reasons the app closed or refused to install, all found by
