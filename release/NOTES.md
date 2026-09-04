@@ -44,6 +44,18 @@ antialiasing. Change one setting at a time.
 
 ## New in this release
 
+**Devices that could not create their own storage folder now work.** A tester
+on LineageOS could open the file picker and select a disc image, and nothing
+ever arrived - the launcher was quietly showing "free space unknown", which is
+what this app prints when the folder it extracts into does not exist and could
+not be created. `Android/data` is restricted ground on recent Android versions.
+When that happens the game is kept in the app's own private storage instead,
+which always works. The setup screen says so, and says the trade-off: a file
+manager cannot see it, and uninstalling takes the game with it. If the folder
+works, nothing changes - and whichever location already holds an install is
+always preferred, so an existing 6 GB copy is never orphaned.
+
+
 **Settings you change now survive the session.** Every graphics row was being
 put back at the next launch - resolution, V-Sync, antialiasing, shadows,
 ambient occlusion, bloom, sun shafts, draw distance, the frame cap and the
