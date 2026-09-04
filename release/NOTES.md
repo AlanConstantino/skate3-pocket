@@ -44,6 +44,29 @@ antialiasing. Change one setting at a time.
 
 ## New in this release
 
+**Mali GPUs are no longer turned away.** A Galaxy S20 FE reported the app
+opening and closing again with no message, which read as a crash. It was not a
+crash: the engine was refusing the GPU. An Arm Mali-G77 reports no
+`vertexPipelineStoresAndAtomics`, and the device was rejected before anything
+was drawn.
+
+That requirement was never as hard as the check enforcing it. The emulated GPU
+path already handles the feature being missing - it routes vertex memexport
+through compute shaders, which is what that path is for - and the only thing it
+cannot serve is a draw that exports from a vertex shader. The device is
+accepted now, and a draw that genuinely needs it fails where it happens instead
+of at startup. On a GPU that has the feature nothing changes at all, because
+the check passes there regardless.
+
+This is the third time a requirement belonging to the emulated pipeline this
+build replaces has turned away hardware that could otherwise run: geometry
+shaders and non-solid fill were the first two.
+
+If you are on a Mali device, this is worth trying - but it has only been proven
+not to break the GPUs that already worked. Whether Skate 3 runs to the end of a
+session on Mali is untested, and a report either way is useful.
+
+
 **Devices that could not create their own storage folder now work.** A tester
 on LineageOS could open the file picker and select a disc image, and nothing
 ever arrived - the launcher was quietly showing "free space unknown", which is
