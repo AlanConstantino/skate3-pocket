@@ -58,6 +58,11 @@ phones keep the fast path and older ones still work.
 by the emulated pipeline this build replaces. Adreno has them; PowerVR and
 many Mali parts do not, and those devices exited during graphics setup.
 
+**The title update could not be downloaded from inside the installer.** The
+engine's wizard shelled out to curl, which Android does not ship, so it failed
+on every device and reported it as a connection problem. It now downloads
+through the app.
+
 **It could not open a disc image from a USB drive.** The file picker returns an
 open descriptor; naming it by path and re-opening it fails for anything under
 system-only storage. It now reads the descriptor directly.
@@ -65,6 +70,18 @@ system-only storage. It now reads the descriptor directly.
 Also fixed: the app's own folder is created wherever it is needed rather than
 only when starting the game, which is what made the title update download fail
 with a missing-file error and free space read as 0.0 GB.
+
+## Low-memory devices
+
+`android_args/tiny.txt` in the repository puts every memory and distance
+setting at its floor, for devices with around 3 GB of RAM. It quarters the
+memory the largest textures take, quarters how much of the world is drawn, and
+turns off every effect that carries its own full-screen target.
+
+It cannot lower the 3D scene's resolution: the render scales only multiply
+upward from 1, so there is no fractional setting to give. And it cannot help a
+device whose CPU is the limit - the emulated game code is what costs the frame,
+and no setting reduces how much the game simulates.
 
 ## Known rough edges
 

@@ -175,6 +175,24 @@ class Skate3Activity : SDLActivity() {
             return pickedFd
         }
 
+        /**
+         * Downloads a file for the engine, which cannot do it itself on
+         * Android. Returns null when the file arrived, or the reason it did
+         * not - the engine shows that text to the player.
+         *
+         * Called from the engine's own thread and blocks it, which is what
+         * that code already expects of its curl call.
+         */
+        @JvmStatic
+        fun downloadTo(url: String, destination: String): String? = try {
+            TitleUpdate.downloadTo(url, java.io.File(destination))
+            Log.i(TAG, "downloaded $url -> $destination")
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "download failed: $url", e)
+            e.message ?: e.toString()
+        }
+
         /** Schedules a relaunch; the caller still has to quit. */
         @JvmStatic
         fun requestRestart(): Boolean {

@@ -1,1 +1,1 @@
-dccc8858155a6d85e9902a1f0d67f6d84936561994947e1fcff78c2c07efd4e1  Skate3-Android-0.1.4-arm64.apk
+604adb50256fa88461ce6cb05937b1071437d6cc5d6dddac03a0adc8db078f97  Skate3-Android-0.1.5-arm64.apk

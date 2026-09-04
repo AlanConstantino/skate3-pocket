@@ -39,8 +39,17 @@ object TitleUpdate {
      * Returns the file, or throws with a message worth showing.
      */
     fun download(context: Context, url: String = DEFAULT_URL,
-                 onProgress: (Long, Long) -> Unit = { _, _ -> }): File {
-        val target = destination(context)
+                 onProgress: (Long, Long) -> Unit = { _, _ -> }): File =
+        downloadTo(url, destination(context), onProgress)
+
+    /**
+     * The same transfer to a caller-chosen file. The engine's own installer
+     * needs this too: its usual route shells out to curl, which Android does
+     * not have, so it fails on every device with exit code 127 and reads to
+     * the player as a connection problem.
+     */
+    fun downloadTo(url: String, target: File,
+                   onProgress: (Long, Long) -> Unit = { _, _ -> }): File {
         // The folder may not exist yet; writing the temporary file straight
         // into it fails with ENOENT and looks like a network problem.
         target.parentFile?.mkdirs()

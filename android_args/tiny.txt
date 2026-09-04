@@ -1,0 +1,64 @@
+# Everything at its floor, for a phone or tablet with about 3 GB of RAM.
+#
+# What this can and cannot do:
+#
+#   It CAN quarter the memory the biggest textures take, quarter how much of
+#   the world is drawn, and cut every cache to its minimum.
+#
+#   It CANNOT render the 3D scene at a lower resolution. The render scales only
+#   multiply upward from 1 (their range is 1 to 8), so there is no fractional
+#   setting to give. Rendering the scene smaller than the screen needs an
+#   engine change, not a setting.
+#
+# The single biggest memory lever is tex_base_mip_px. It drops the top mip of
+# every scene texture at least that many texels wide, uploading from mip 1
+# down, which quarters the bytes of exactly the textures that dominate the
+# store. It costs the finest level of detail, which on a small screen is
+# largely unreachable anyway.
+
+# ---- Memory ---------------------------------------------------------------
+skate3_native_render_scene_tex_base_mip_px=256
+# 256 is the floor both stores are clamped to; asking for less only warns.
+skate3_native_render_scene_tex_store_mb=256
+skate3_native_render_scene_mesh_store_mb=256
+texture_cache_memory_limit_soft=128
+texture_cache_memory_limit_hard=192
+texture_cache_memory_limit_soft_lifetime=15
+texture_cache_memory_limit_render_to_texture=16
+
+# ---- How much world is resident and drawn ---------------------------------
+# 0.25 is the minimum the range allows. 1.0 is the console's own distance, so
+# this draws a quarter of what an Xbox 360 did.
+skate3_draw_distance_scale=0.25
+skate3_lod_distance_scale=0.25
+
+# ---- Everything that carries its own full-screen target --------------------
+skate3_native_render_scene_msaa=1
+skate3_native_render_scene_ssao=false
+skate3_native_render_scene_bloom=false
+skate3_native_render_scene_shafts=false
+skate3_native_render_scene_ssr=false
+skate3_native_render_scene_haze=false
+skate3_native_render_scene_shadows=false
+skate3_native_render_scene_shadow_pcss=false
+# 4 MB rather than the 16 MB a 2048 atlas costs; unused with shadows off, and
+# correct if they are turned back on.
+skate3_native_render_scene_shadow_static_size=512
+
+# ---- Pacing ----------------------------------------------------------------
+# 30 rather than 60: an exact 2:1 cadence on a 60 Hz panel, so every frame is
+# shown for exactly two refreshes. On a machine that cannot hold 60 this reads
+# as locked where an unstable 45 reads as judder, and it halves the streaming
+# and decode work per second, which is where the memory pressure comes from.
+skate3_guest_fps_cap=30
+skate3_guest_fps_cap_auto=false
+vsync=true
+
+# ---- Emulated passes the native renderer already replaced ------------------
+native_render_suppress_mode=1
+gpu_wait_reg_mem_timeout_ms=20
+
+# ---- Streaming work per frame ---------------------------------------------
+# Smaller slices, so a decode cannot hold the frame for as long on slow cores.
+skate3_native_render_scene_mesh_decode_budget=1
+skate3_native_render_scene_prewarm_budget_ms=2
