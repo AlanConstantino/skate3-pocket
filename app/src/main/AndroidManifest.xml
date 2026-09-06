@@ -25,6 +25,12 @@
         android:extractNativeLibs="false"
         android:theme="@style/Theme.Skate3">
 
+        <!-- Lets `adb shell simpleperf` sample this process. Profiling only -
+             it does not make the app debuggable and does not expose its data.
+             Without it there is no way to find out where the frame actually
+             goes on a device that is slow, and guessing has been expensive. -->
+        <profileable android:shell="true" />
+
         <!-- The launcher: finds or installs the game data, then hands over. -->
         <activity
             android:name=".SetupActivity"

@@ -1,6 +1,7 @@
 package com.nakas.skate3
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ActivityManager
 import android.content.Intent
 import android.graphics.Color
@@ -254,7 +255,46 @@ class SetupActivity : Activity() {
             return
         }
         val flag = if (requestCode == REQUEST_ISO) "skate3_install_iso" else "skate3_install_tu"
-        startGame(listOf("--$flag=/proc/self/fd/$fd"))
+        val args = listOf("--$flag=/proc/self/fd/$fd")
+        if (requestCode == REQUEST_ISO) {
+            confirmLongInstall(args)
+        } else {
+            startGame(args)
+        }
+    }
+
+    /**
+     * Says what is about to happen before the screen goes black.
+     *
+     * Unpacking the disc takes minutes, and the engine does it before it draws
+     * anything, so the player gets a black screen with no indication that
+     * anything is happening. People reasonably conclude it has frozen and
+     * force-close it partway through, which leaves a half-extracted game and
+     * turns a working install into "the port doesn't work" - it is the single
+     * most common report there is, and the install had been succeeding every
+     * time.
+     *
+     * The engine's own installer used to draw a progress bar here; the path
+     * that takes the file from this screen skips that wizard entirely. Until
+     * that reports progress, saying so plainly beforehand is what stops people
+     * interrupting it.
+     */
+    private fun confirmLongInstall(args: List<String>) {
+        AlertDialog.Builder(this)
+            .setTitle("This takes several minutes")
+            .setMessage(
+                "The game is about to unpack around 6 GB from your disc image.\n\n" +
+                    "The screen will go BLACK and stay black for the whole time - " +
+                    "usually 3 to 15 minutes depending on the device. There is no " +
+                    "progress bar yet. It has not frozen.\n\n" +
+                    "Do not close the app or let the screen turn off until the game " +
+                    "appears, or the install will be left half-finished and you will " +
+                    "have to start again."
+            )
+            .setPositiveButton("Start the install") { _, _ -> startGame(args) }
+            .setNegativeButton("Cancel", null)
+            .setCancelable(false)
+            .show()
     }
 
     private fun startGame(extraArgs: List<String> = emptyList()) {

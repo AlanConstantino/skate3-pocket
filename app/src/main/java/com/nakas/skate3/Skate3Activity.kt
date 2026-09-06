@@ -43,6 +43,13 @@ class Skate3Activity : SDLActivity() {
         if (SDLActivity.mBrokenLibraries) return
         instance = this
 
+        // Cover the black surface while the disc unpacks. The engine extracts
+        // before it renders anything, so without this the player sees minutes
+        // of black and reasonably assumes it has frozen.
+        if (arguments.any { it.startsWith("--skate3_install_iso=") }) {
+            InstallOverlay.attach(this)
+        }
+
         // A controller-driven game sends no touch events for minutes at a
         // time, which reads to the system as an idle screen.
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
