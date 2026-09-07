@@ -220,28 +220,45 @@ object Diagnostics {
             "data/audio/music/Ipod_Stream.mus",
         )) {
             val f = File(game, name)
-            appendLine(if (f.isFile) "  $name  ${f.length()} bytes  sha256 ${sha256(f)}"
+            // Executables in full; the multi-hundred-megabyte streams sampled.
+            val limit = if (name.endsWith(".mus")) 1024L * 1024 else Long.MAX_VALUE
+            appendLine(if (f.isFile) "  $name  ${f.length()} bytes  sha256 ${sha256(f, limit)}"
                        else "  $name  MISSING")
         }
     }
 
     /**
-     * The first 1 MB is enough to identify a file and cheap on a FUSE-backed
-     * path; a full hash of a 400 MB stream file would keep the player waiting.
+     * Hash the whole executable, and only sample the giant media files.
+     *
+     * This hashed the first 1 MB of everything, which was worse than useless
+     * for the one question it was added to answer. Two devices disagreed about
+     * a byte in the game's codec tag table, at guest 0x8210A310 - which is
+     * 0x10A310 into an image that loads at 0x82000000, i.e. **41,744 bytes past
+     * the end of what was being hashed**. The report said the discs matched and
+     * the region in dispute had never been looked at.
+     *
+     * default.xex is 6.6 MB and hashes in about a second, so it is hashed in
+     * full. The .mus stream files are hundreds of megabytes and are only being
+     * identified, not verified, so those keep the cheap prefix - and say so.
+     * (default.xexp needs neither: the title update installer already verifies
+     * both patch payloads against pinned full-file hashes and refuses a
+     * mismatch, so a staged one is identical by construction.)
      */
-    private fun sha256(file: File): String = try {
+    private fun sha256(file: File, limit: Long = Long.MAX_VALUE): String = try {
         val digest = java.security.MessageDigest.getInstance("SHA-256")
+        var read = 0L
         file.inputStream().use { stream ->
             val buffer = ByteArray(64 * 1024)
-            var remaining = 1024L * 1024
-            while (remaining > 0) {
-                val n = stream.read(buffer, 0, minOf(buffer.size.toLong(), remaining).toInt())
+            while (read < limit) {
+                val want = minOf(buffer.size.toLong(), limit - read).toInt()
+                val n = stream.read(buffer, 0, want)
                 if (n <= 0) break
                 digest.update(buffer, 0, n)
-                remaining -= n
+                read += n
             }
         }
-        digest.digest().joinToString("") { "%02x".format(it) }.take(32) + " (first 1 MB)"
+        val hex = digest.digest().joinToString("") { "%02x".format(it) }.take(32)
+        if (read >= file.length()) "$hex (whole file)" else "$hex (first ${read / (1024 * 1024)} MB)"
     } catch (e: Exception) {
         "unreadable (${e.message})"
     }
