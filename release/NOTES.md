@@ -44,6 +44,42 @@ antialiasing. Change one setting at a time.
 
 ## New in this release
 
+**0.1.18 — the static-image write watch, robust file reads, and the name-prompt
+crash.** Three QCS8550 handhelds (AYN Thor, Retroid Pocket 6, AYN Odin2 Portal)
+never load the world: a table of codec tags in the game's static data is found
+overwritten with English text about ten seconds after the executable loads, on
+every run, on every one of those devices, while every file they read is
+byte-identical to a working phone's. The text exists in no game file and in no
+code, nothing in the recompiled game stores to that address, and the engine
+never checked the image after loading it. This build does three things about it.
+
+- *The image is checked and guarded.* Right after the executable and its title
+  update are loaded, the engine keeps a copy of the image's read-only data,
+  logs one hash of it, and makes those pages actually read-only. The first
+  write into any of them is caught by the engine's own fault handler, recorded
+  with the writer's address and the game's call chain, and then allowed
+  through. Every thirty seconds the live image is compared against the copy and
+  any difference is logged in full. When the codec table is found damaged, the
+  whole neighbourhood is put back from the copy, not just the two tags. All of
+  this costs nothing while nothing writes.
+- *File reads are looped.* A read from the game folder used to be a single
+  system call whose result was passed to the game as-is. On a folder served
+  through Android's FUSE layer a read can legitimately come back short or be
+  interrupted by a signal, and the game, written for a console where that never
+  happened, would parse zeros. Reads now continue until they are complete, and
+  any short or interrupted read is logged with the file and offset. The
+  diagnostic report also says which filesystem serves the game folder.
+- *Choosing a name no longer crashes.* A Retroid Pocket 6 that got past the
+  frontend crashed the moment the game asked for the skater's name. The on-screen
+  keyboard dialog could be dismissed before the engine had finished wiring it up
+  to the game's request, and the engine then wrote into a dialog that no longer
+  existed. Dialogs are now built and wired in one step on the thread that draws
+  them.
+
+Also fixed: loading the game's web module three minutes into a session erased
+the engine's own bookkeeping for the main executable's memory. If a report from
+0.1.18 still shows the table damaged, it now also names what wrote it.
+
 **Mali GPUs are no longer turned away.** A Galaxy S20 FE reported the app
 opening and closing again with no message, which read as a crash. It was not a
 crash: the engine was refusing the GPU. An Arm Mali-G77 reports no

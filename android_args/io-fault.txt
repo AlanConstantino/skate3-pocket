@@ -1,0 +1,11 @@
+# Fault injection for the host file reads (v0.1.18+). Reproduces, on a healthy
+# phone, the two ways a FUSE-served game folder can misbehave: reads that come
+# back short, and reads that fail. With filesystem_read_loop=false the engine
+# behaves like v0.1.17 and the guest sees the damage; with it true (the
+# default) the loop hides it and only logs. Push with scripts/push_args.sh,
+# clear with --clear. Relaunch the game after either.
+filesystem_read_loop=false
+filesystem_fault_short_cap=65536
+filesystem_fault_fail_every=0
+filesystem_fault_errno=5
+filesystem_fault_path_substr=/game/

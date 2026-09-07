@@ -88,6 +88,11 @@ object Diagnostics {
         appendLine()
         appendLine(listing(root))
         appendLine()
+        appendLine(mountInfo(root))
+        appendLine(openFileLimit())
+        appendLine()
+        appendLine(userListing(GameData.userDir(context)))
+        appendLine()
         appendLine(discIdentity(context))
         appendLine()
         appendLine("Locale ${Locale.getDefault()}")
@@ -182,6 +187,73 @@ object Diagnostics {
             free / 1e9, total / 1e9)
     } catch (e: Exception) {
         "Storage unreadable (${e.message})"
+    }
+
+    /**
+     * Which filesystem actually serves the game folder. Three QCS8550 handhelds
+     * show corrupted static data with file inputs proven identical to a working
+     * phone's; the one thing no report could say was whether their game
+     * directory is served by FUSE (where a read may return short or be
+     * interrupted) or bind-mounted straight from the lower filesystem. This is
+     * read from the app's own mount namespace, which is the only one that counts.
+     */
+    private fun mountInfo(dir: File): String = try {
+        val path = dir.canonicalPath
+        val best = File("/proc/self/mounts").readLines()
+            .map { it.split(" ") }
+            .filter { it.size >= 4 && (path == it[1] || path.startsWith(it[1].trimEnd('/') + "/")) }
+            .maxByOrNull { it[1].length }
+        val st = android.system.Os.statvfs(path)
+        val passthrough = runCatching {
+            ProcessBuilder("getprop", "persist.sys.fuse.passthrough.enable").start()
+                .inputStream.bufferedReader().readText().trim().ifEmpty { "unset" }
+        }.getOrDefault("?")
+        buildString {
+            appendLine("Mount ${best?.getOrNull(1) ?: "?"} type ${best?.getOrNull(2) ?: "?"} " +
+                "from ${best?.getOrNull(0) ?: "?"} (${best?.getOrNull(3) ?: ""})")
+            appendLine("statvfs bsize=${st.f_bsize} blocks=${st.f_blocks} bavail=${st.f_bavail} " +
+                "flag=${st.f_flag} namemax=${st.f_namemax}")
+            append("fuse passthrough prop $passthrough")
+        }
+    } catch (e: Exception) {
+        "Mount info unreadable (${e.message})"
+    }
+
+    /** The per-process open-file limit; a low soft limit turns file opens into silent failures. */
+    private fun openFileLimit(): String = try {
+        File("/proc/self/limits").readLines()
+            .firstOrNull { it.startsWith("Max open files") }
+            ?.replace(Regex("\\s+"), " ")
+            ?: "Max open files: not listed"
+    } catch (e: Exception) {
+        "Limits unreadable (${e.message})"
+    }
+
+    /**
+     * The user folder two levels deep, so a report shows whether a save exists
+     * and how old it is. Every failing device so far was on a first boot with
+     * no save; the developer's phone always had one.
+     */
+    private fun userListing(user: File): String = try {
+        val stamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+        val lines = mutableListOf("User folder ${user.absolutePath}")
+        fun walk(dir: File, depth: Int, prefix: String) {
+            val entries = dir.listFiles()?.sortedBy { it.name } ?: return
+            for (f in entries) {
+                if (lines.size >= 200) return
+                if (f.isDirectory) {
+                    lines.add("  $prefix${f.name}/  (${f.listFiles()?.size ?: 0} entries)")
+                    if (depth < 3) walk(f, depth + 1, "$prefix${f.name}/")
+                } else {
+                    lines.add(String.format(Locale.US, "  %s%s  %d bytes  %s", prefix, f.name,
+                        f.length(), stamp.format(Date(f.lastModified()))))
+                }
+            }
+        }
+        if (user.isDirectory) walk(user, 0, "") else lines.add("  (missing)")
+        lines.joinToString("\n")
+    } catch (e: Exception) {
+        "User folder could not be listed (${e.message})"
     }
 
     private fun listing(root: File): String = try {
