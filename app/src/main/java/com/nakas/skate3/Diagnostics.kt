@@ -35,6 +35,7 @@ object Diagnostics {
 
         appendLine(section("Build"))
         appendLine("App ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+        appendLine("Engine ${engineVersion(context)}")
         appendLine("Native library ${nativeLibraryDescription(context)}")
         appendLine()
 
@@ -121,6 +122,29 @@ object Diagnostics {
     }
 
     private fun section(title: String) = "===== $title " + "=".repeat(maxOf(4, 60 - title.length))
+
+    /**
+     * The engine build, at the top of the report where it is read.
+     *
+     * The app version alone is not enough to tell two builds apart. Six APKs
+     * were handed out in one day all reporting "0.1.14 (15)", two testers ended
+     * up on different ones, and working out which was which meant grepping the
+     * log for the presence or absence of individual diagnostic lines. The
+     * engine already stamps its git description into the log on every start;
+     * this lifts the most recent one into the Build section so a report
+     * identifies itself in its first five lines.
+     */
+    private fun engineVersion(context: Context): String = try {
+        val log = File(GameData.root(context), "skate3.log")
+        if (!log.isFile) "unknown (no engine log yet)"
+        else log.useLines { lines ->
+            lines.lastOrNull { it.contains("skate3 starting [") }
+                ?.substringAfter("skate3 starting [")?.substringBefore(']')
+                ?: "unknown (the engine has not started)"
+        }
+    } catch (e: Exception) {
+        "unknown (${e.message})"
+    }
 
     private fun nativeLibraryDescription(context: Context): String = try {
         val lib = File(context.applicationInfo.nativeLibraryDir, "libmain.so")
