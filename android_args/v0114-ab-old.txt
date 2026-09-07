@@ -1,0 +1,40 @@
+# The v0.1.14 build with its three timing changes REVERTED, for an A/B against
+# the same build in the same session. Push this, skate a route, pull the log,
+# then push android_args/streaming.txt and skate the same route again; the
+# only difference between the two runs is these three lines.
+#
+# What each one puts back:
+#   skate3_guest_fps_cap_spin_us=2000   the frame pacer's old yield window.
+#       Measured at 14.4% of the guest render thread's cycles in sched_yield.
+#   gpu_idle_spin_iterations=500        the command processor's old idle poll.
+#       Measured at 14.4% of that thread's cycles in MaybeYield, on a thread a
+#       scheduler trace showed runnable-with-no-core for 7.8 of 50 seconds.
+#   rtl_critical_section_max_spin=0     unbounded guest lock spinning.
+#
+# The strstr memo fix in OnDrawDone has no cvar and stays in both runs; it was
+# 4.9% of the render thread and is not a timing trade.
+#
+# Read `[pace] 30s:` max across at least four windows in each log. The
+# v0.1.13 baseline on this device and route was
+# max 59.8 / 60.6 / 76.2 / 81.9 / 70.4 / 83.1 / 59.0 ms, p95 16.7-16.9, fps 59.4.
+
+skate3_guest_fps_cap_spin_us=2000
+gpu_idle_spin_iterations=500
+rtl_critical_section_max_spin=0
+
+skate3_diagnostics=true
+skate3_native_render_scene_perf_interval=120
+skate3_native_render_scene_occlusion_cull_build=false
+
+skate3_native_render_scene=true
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+gpu_wait_reg_mem_timeout_ms=20

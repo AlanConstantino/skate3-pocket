@@ -87,6 +87,14 @@ object Diagnostics {
         appendLine()
         appendLine(listing(root))
         appendLine()
+        appendLine(discIdentity(context))
+        appendLine()
+        appendLine("Locale ${Locale.getDefault()}")
+        appendLine(userSetting(context, "user_language"))
+        appendLine()
+        appendLine(section("Engine startup (stderr)"))
+        appendLine(tail(File(root, "stderr.log"), STDERR_TAIL_BYTES))
+        appendLine()
 
         appendLine(section("Engine crash report"))
         val crash = File(root, "skate3.log.crash")
@@ -190,5 +198,66 @@ object Diagnostics {
         "Could not be read (${e.message})"
     }
 
+    /**
+     * Which copy of the game this is.
+     *
+     * Two Thor reports came back with an audio format the game asks for and
+     * this build's registry does not contain, and there was no way to tell
+     * from the report whether that was a corrupted queue or simply a different
+     * disc - a different region, a later reprint - carrying different codec
+     * data. A size and hash settles it in one line, against the developer's
+     * own copy, without anyone having to send six gigabytes.
+     */
+    private fun discIdentity(context: Context): String = buildString {
+        appendLine("Disc identity")
+        val game = GameData.gameDir(context)
+        for (name in listOf(
+            "default.xex",
+            "default.xexp",
+            "data/webkit/EAWebkit.xexp",
+            "data/audio/music/World_Stream.mus",
+            "data/audio/music/Game_Stream.mus",
+            "data/audio/music/Ipod_Stream.mus",
+        )) {
+            val f = File(game, name)
+            appendLine(if (f.isFile) "  $name  ${f.length()} bytes  sha256 ${sha256(f)}"
+                       else "  $name  MISSING")
+        }
+    }
+
+    /**
+     * The first 1 MB is enough to identify a file and cheap on a FUSE-backed
+     * path; a full hash of a 400 MB stream file would keep the player waiting.
+     */
+    private fun sha256(file: File): String = try {
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { stream ->
+            val buffer = ByteArray(64 * 1024)
+            var remaining = 1024L * 1024
+            while (remaining > 0) {
+                val n = stream.read(buffer, 0, minOf(buffer.size.toLong(), remaining).toInt())
+                if (n <= 0) break
+                digest.update(buffer, 0, n)
+                remaining -= n
+            }
+        }
+        digest.digest().joinToString("") { "%02x".format(it) }.take(32) + " (first 1 MB)"
+    } catch (e: Exception) {
+        "unreadable (${e.message})"
+    }
+
+    /** One line out of the saved settings, so a report says what was configured. */
+    private fun userSetting(context: Context, key: String): String = try {
+        val toml = File(GameData.userDir(context), "settings.toml")
+        if (!toml.isFile) "$key <no settings.toml>"
+        else toml.readLines().firstOrNull { it.trimStart().startsWith(key) }
+            ?.trim() ?: "$key <not set>"
+    } catch (e: Exception) {
+        "$key unreadable (${e.message})"
+    }
+
     private const val LOG_TAIL_BYTES = 256L * 1024
+
+    // Small: this is the argument list and the thread placement, not a log.
+    private const val STDERR_TAIL_BYTES = 8L * 1024
 }

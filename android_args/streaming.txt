@@ -1,0 +1,33 @@
+# Zone-streaming investigation: the diagnostics profile with a finer perf
+# window, so the per-window `native-scene perf:` line (which carries
+# guest_dt_max, build/render costs, decode counts and the prewarm commit cost)
+# lands every ~2 seconds instead of every ten. A streaming hitch lasts one
+# frame; at the shipped 600-frame window it is averaged away.
+#
+# Deliberately NOT enabling skate3_draw_distance_debug here: its `stream
+# gather` and `stream probe` lines fire per frame per focus, and writing them
+# to FUSE-backed storage perturbs exactly the frame times being measured. Use
+# a separate run for the load/unload correlation.
+#
+# Everything below the diagnostics line is the shipping Android default,
+# spelled out so a run is reproducible.
+
+skate3_diagnostics=true
+skate3_native_render_scene_perf_interval=120
+
+# The device's standing correction: re-test disocclusion every frame so map
+# sections stop blinking in front of the camera.
+skate3_native_render_scene_occlusion_cull_build=false
+
+skate3_native_render_scene=true
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+gpu_wait_reg_mem_timeout_ms=20

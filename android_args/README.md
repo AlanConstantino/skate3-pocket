@@ -38,3 +38,21 @@ really does implement both, so leave them alone unless measuring tearing.
   warm; a locked 30 reads better than an unstable 45.
 - `quality.txt` — spends the headroom an 8 Gen 1 has over the phones this was
   tuned on: shadows, ambient occlusion, bloom, 2x MSAA.
+
+## streaming.txt / v0114-ab-old.txt
+
+`streaming.txt` is `diagnostics.txt` with `skate3_native_render_scene_perf_interval=120`,
+so the per-window `native-scene perf:` line (which carries `guest_dt_max`, the
+build and render costs and the prewarm commit cost) lands every two seconds
+instead of every ten. A streaming hitch lasts one frame; at the shipped
+600-frame window it is averaged away.
+
+It deliberately does NOT set `skate3_draw_distance_debug`. That cvar's
+`stream gather` and `stream probe` lines fire per frame per focus, and writing
+them to FUSE-backed storage perturbs the very frame times being measured. Use a
+separate run when you want the load/unload correlation.
+
+`v0114-ab-old.txt` reverts v0.1.14's three timing changes - the frame pacer's
+spin window, the command processor's idle poll, and the guest critical-section
+spin cap - so the same build can be measured both ways in one session. Read
+`[pace] 30s:` max across at least four windows in each.

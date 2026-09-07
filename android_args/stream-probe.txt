@@ -1,0 +1,29 @@
+# Pre-stream world detail cells ahead of the camera.
+#
+# Measured 2026-09-07: after the Swap-spin and strstr fixes removed ~19% of the
+# guest render thread's work, the hitch did not move. Its profile has no hot
+# spot left - it is a long tail of guest functions each running 50-80x its
+# normal rate for one frame, which is the shape of a BURST: a zone's objects all
+# being set up in the same frame. Making the frame cheaper cannot fix that;
+# spreading the burst can.
+#
+# skate3_draw_distance_stream_probe pre-streams detail cells this many metres
+# ahead of the camera focus, so the cells arrive earlier and over more frames
+# instead of all at the boundary. 0 is the console's behaviour.
+
+skate3_draw_distance_stream_probe=50
+
+skate3_diagnostics=true
+skate3_native_render_scene_perf_interval=120
+skate3_native_render_scene=true
+skate3_guest_fps_cap=60
+skate3_guest_fps_cap_auto=false
+vsync=true
+native_render_suppress_mode=1
+skate3_draw_distance_scale=1.0
+skate3_lod_distance_scale=1.0
+skate3_native_render_scene_tex_store_mb=288
+skate3_native_render_scene_mesh_store_mb=224
+texture_cache_memory_limit_soft=256
+texture_cache_memory_limit_hard=384
+gpu_wait_reg_mem_timeout_ms=20
