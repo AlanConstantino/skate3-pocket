@@ -244,9 +244,18 @@ object Diagnostics {
             "data/audio/music/Ipod_Stream.mus",
         )) {
             val f = File(game, name)
-            // Executables in full; the multi-hundred-megabyte streams sampled.
-            val limit = if (name.endsWith(".mus")) 1024L * 1024 else Long.MAX_VALUE
-            appendLine(if (f.isFile) "  $name  ${f.length()} bytes  sha256 ${sha256(f, limit)}"
+            // Everything in full, including the .mus streams.
+            //
+            // Those were sampled at 1 MB on the reasoning that they were being
+            // identified rather than verified. That was the wrong call twice
+            // over. The same reasoning had already hidden a mismatched region
+            // of default.xex by 41,744 bytes, and the failure now under
+            // investigation is an AUDIO parser producing negative buffer sizes
+            // on devices whose executables are byte-identical to this build -
+            // which makes the audio data the most interesting unverified input
+            // there is. Hashing 430 MB costs a few seconds in a report the
+            // player asks for; guessing costs a round trip per tester.
+            appendLine(if (f.isFile) "  $name  ${f.length()} bytes  sha256 ${sha256(f)}"
                        else "  $name  MISSING")
         }
     }
