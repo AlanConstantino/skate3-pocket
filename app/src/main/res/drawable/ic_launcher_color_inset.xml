@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Map the approved square artwork into the central 66 dp of a 108 dp layer. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="19.444444%">
+    <bitmap android:src="@drawable/skate3_pocket_icon"
+        android:gravity="fill" android:filter="true" />
+</inset>

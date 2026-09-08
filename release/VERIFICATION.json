@@ -1,6 +1,6 @@
 {
-  "release": "Skate 3 Pocket 0.1.0",
-  "source_tag": "pocket-v0.1.0",
+  "release": "Skate 3 Pocket 0.1.1",
+  "source_tag": "pocket-v0.1.1",
   "repository": "https://github.com/AlanConstantino/skate3-pocket",
   "verified_date": "2026-09-08",
   "upstream": {
@@ -11,17 +11,17 @@
   "application": {
     "id": "io.github.alanconstantino.skate3pocket",
     "label": "Skate 3 Pocket",
-    "version_name": "0.1.0",
-    "version_code": 1,
+    "version_name": "0.1.1",
+    "version_code": 2,
     "minimum_android_api": 28,
     "abi": "arm64-v8a",
     "debuggable": false,
     "certificate_sha256": "8fb17b2ff86d95cd2ec34345b0118dcb82c7f3927564d36ac2c2d8bf969fb7f2"
   },
   "apk": {
-    "apk": "Skate3-Pocket-0.1.0-arm64.apk",
-    "bytes": 40423277,
-    "sha256": "e5e4c5061088734140f4962416dd486779d99cf61d84fa74f69f6dcab6758b43",
+    "apk": "Skate3-Pocket-0.1.1-arm64.apk",
+    "bytes": 41688621,
+    "sha256": "4eac564dfc8e8bc591f9e6c97c0c4790c5cda87894e2b8659754435996ec9b16",
     "verified_entries": {
       "lib/arm64-v8a/libmain.so": "5c952868cf4e5b15a6e6d6b228adf83c6b3633884ba0237f28264af4e5796a39",
       "lib/arm64-v8a/libvulkan.so": "f80c12ba07c70626e1953d9f6085172bf7ecc0d3538efe4227e439b3ade54c58",
@@ -34,137 +34,62 @@
     "sources_lock_sha256": "f4530cb1cea89a1eb7ee66e11f7e0e2980b3e54fc435e66f77c05ad910502c60",
     "gameplay_tested_by_this_script": false
   },
+  "icon": {
+    "approved_artwork_sha256": "396a570d9128c24b05f11fcf31490e703c3a2e671d00d92c5d6886710a86ca14",
+    "source": "app/src/main/res/drawable-nodpi/skate3_pocket_icon.png",
+    "source_dimensions": [
+      1254,
+      1254
+    ],
+    "legacy_density_sizes": [
+      48,
+      72,
+      96,
+      144,
+      192
+    ],
+    "adaptive_canvas_dp": 108,
+    "artwork_inset_percent": 19.444444,
+    "themed_icon": "Transparent native vector companion with handheld, numeral 3 and skateboard.",
+    "visual_checks": "Circle, rounded-square and themed previews inspected at 48, 72 and 96 pixels.",
+    "monochrome_vector_sha256": "1427a350f6452e42f27f1afdf0ffcfc0302ae5668d4576b9b8ec8f8f8b00049c",
+    "packaged_png_pixel_comparison": {
+      "pngs_checked": 11,
+      "rgba_pixels_and_dimensions_identical_to_source": true
+    }
+  },
   "verification": {
-    "release_build_and_lint": "passed",
-    "input_preparation_unit_tests": {
-      "passed": 8
-    },
-    "device": {
-      "model": "Retroid Pocket 6",
-      "ram_gb": 12,
-      "android_api": 33,
-      "gpu": "Adreno 740"
-    },
-    "driver_store_instrumentation": {
-      "passed": true,
-      "cases": 25,
-      "assertions": 428,
-      "production_source_sha256": {
-        "app/src/main/java/com/nakas/skate3/DriverStore.kt": "8b2fb178bee2b10c9ea5583e7c2aa2020b743d90425e4c25e78d1aa5ba9a74a9",
-        "app/src/main/java/com/nakas/skate3/DriverBridge.kt": "a1c9d5b853302de1033f77a595f873030da16e534dbd7e34743dc545bb19f4cf"
-      }
-    },
-    "input_dex_comparison": {
-      "baseline_apk_sha256": "605e4078448aec68e7122a30d6c760aff062a9b01dc30f39351f70db028cbb7f",
-      "classes_compared": 48,
-      "equal_after_pool_index_and_file_offset_normalization": 48,
-      "differences": []
-    },
-    "native_helper_comparison": {
-      "libvulkan.so": {
-        "sha256": "f80c12ba07c70626e1953d9f6085172bf7ecc0d3538efe4227e439b3ade54c58",
-        "different_allocated_sections": [
-          ".note.gnu.build-id"
-        ],
-        "runtime_sections_match_except_build_id": true,
-        "debug_sections": [],
-        "contains_private_checkout_path": false
-      },
-      "libmain_hook.so": {
-        "sha256": "248ed3dda1eaa0c58dfa7f78548a491c428802bd3b19f15d3629266fded78aa1",
-        "different_allocated_sections": [
-          ".note.gnu.build-id"
-        ],
-        "runtime_sections_match_except_build_id": true,
-        "debug_sections": [],
-        "contains_private_checkout_path": false
-      },
-      "libhook_impl.so": {
-        "sha256": "f39185598a3a709aa66ce3fab51d31d8d1ea1924d8e21fc3854a98f7ecbd10e1",
-        "different_allocated_sections": [
-          ".note.gnu.build-id"
-        ],
-        "runtime_sections_match_except_build_id": true,
-        "debug_sections": [],
-        "contains_private_checkout_path": false
-      }
-    },
-    "signed_release_driver_probes": [
-      {
-        "selection": "t30",
-        "label": "Turnip T30",
-        "native": {
-          "ok": true,
-          "mode": "turnip",
-          "error": "",
-          "loader_path": "/memfd:/system/lib64/libvulkan.so (deleted)",
-          "devices": [
-            {
-              "name": "PurpleVK-public Adreno (TM) 740 (git-62ac221a33)/unknown",
-              "api_version": 4211047,
-              "driver_version": 109060195,
-              "vendor_id": 20803,
-              "device_id": 1124403713,
-              "driver_id": 18,
-              "driver_name": "PurpleVK public driver",
-              "driver_info": "PurpleVK 26.3.0-devel (git-62ac221a33)"
-            }
-          ]
-        }
-      },
-      {
-        "selection": "system",
-        "label": "System",
-        "native": {
-          "ok": true,
-          "mode": "system",
-          "error": "",
-          "loader_path": "/system/lib64/libvulkan.so",
-          "devices": [
-            {
-              "name": "Adreno (TM) 740",
-              "api_version": 4206720,
-              "driver_version": 2150252597,
-              "vendor_id": 20803,
-              "device_id": 1124403713,
-              "driver_id": 8,
-              "driver_name": "Qualcomm Technologies Inc. Adreno Vulkan Driver",
-              "driver_info": "Driver Build: 69e13475cb, I1df7ad3aa9, 1703680572\nDate: 12/27/23\nCompiler Version: E031.41.03.47\nDriver Branch: \n"
-            }
-          ]
-        }
-      },
-      {
-        "selection": "imported:e6e10ef71c31b6117ba5163f48a873b7d32e66a687e8c2d06c407cc740d97387",
-        "label": "Mesa Turnip driver v26.0.0 - R7 (1)",
-        "native": {
-          "ok": true,
-          "mode": "turnip",
-          "error": "",
-          "loader_path": "/memfd:/system/lib64/libvulkan.so (deleted)",
-          "devices": [
-            {
-              "name": "Turnip Adreno (TM) 740",
-              "api_version": 4211023,
-              "driver_version": 105263203,
-              "vendor_id": 20803,
-              "device_id": 1124403713,
-              "driver_id": 18,
-              "driver_name": "turnip Mesa driver",
-              "driver_info": "Mesa 26.0.0-devel (git-e0fbf9a908)"
-            }
-          ]
-        }
-      }
-    ],
-    "signed_release_ui_checks": [
-      "Public launcher name and missing-data state",
-      "Import R7 ZIP through Android file picker",
-      "Apply and restart: T30 to System to R7",
-      "About screen",
-      "Bundled third-party notices"
-    ],
-    "installed_release_sha256_matches": true,
-    "scope": "Driver import, persistence, restart, native Vulkan initialization and release packaging. No gameplay session or comparative FPS benchmark was run for this renamed APK."
+    "release_build": "passed",
+    "lint_release": "passed with existing baseline and non-fatal warnings",
+    "signature_verified": true,
+    "alignment_16k_verified": true,
+    "device_tested_for_this_release": false,
+    "scope": "Icon and version update. Static APK comparison and launcher artwork previews; no device gameplay or performance test was run for 0.1.1.",
+    "baseline_release_comparison": {
+      "release": "pocket-v0.1.0",
+      "baseline_apk_sha256": "e5e4c5061088734140f4962416dd486779d99cf61d84fa74f69f6dcab6758b43",
+      "same_application_id_and_signing_certificate": true,
+      "native_engine_and_driver_assets_byte_identical": true,
+      "baseline_dex_classes": 3363,
+      "candidate_dex_classes": 3364,
+      "identical_classes_after_index_and_offset_normalization": 3358,
+      "version_only_class_changes": [
+        "com/nakas/skate3/AboutActivity",
+        "com/nakas/skate3/BuildConfig",
+        "com/nakas/skate3/Diagnostics"
+      ],
+      "generated_icon_resource_class_changes": [
+        "androidx/core/R$drawable",
+        "com/nakas/skate3/R$mipmap"
+      ],
+      "generated_icon_resource_class_added": "com/nakas/skate3/R$drawable",
+      "gameplay_controller_and_driver_logic_changes": false,
+      "unchanged_non_icon_resource_configurations": 169,
+      "manifest_changes": [
+        "versionCode: 1 to 2",
+        "versionName: 0.1.0 to 0.1.1",
+        "roundIcon: ic_launcher to ic_launcher_round"
+      ]
+    }
   }
 }

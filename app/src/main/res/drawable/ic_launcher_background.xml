@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keep artwork and backdrop on one layer so launcher motion cannot separate them. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#242A31" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_color_inset" />
+</layer-list>
