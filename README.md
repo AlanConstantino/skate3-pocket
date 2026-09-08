@@ -1,6 +1,6 @@
 # Skate 3 Pocket
 
-![Skate 3 Pocket artwork featuring an orange Retroid Pocket 6 at a skatepark](docs/images/skate3-pocket-hero.png)
+![Skate 3 Pocket artwork featuring an orange Retroid Pocket 6 at a skatepark](docs/images/skate3-pocket-hero.jpg)
 
 [Download the APK](https://github.com/AlanConstantino/skate3-pocket/releases/latest) · [Build from source](docs/BUILDING.md) · [Report a problem](https://github.com/AlanConstantino/skate3-pocket/issues)
 
