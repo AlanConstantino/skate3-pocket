@@ -1,6 +1,6 @@
 {
-  "release": "Skate 3 Pocket 0.1.1",
-  "source_tag": "pocket-v0.1.1",
+  "release": "Skate 3 Pocket 0.1.0",
+  "source_tag": "pocket-v0.1.0",
   "repository": "https://github.com/AlanConstantino/skate3-pocket",
   "verified_date": "2026-09-08",
   "upstream": {
@@ -11,17 +11,17 @@
   "application": {
     "id": "io.github.alanconstantino.skate3pocket",
     "label": "Skate 3 Pocket",
-    "version_name": "0.1.1",
-    "version_code": 2,
+    "version_name": "0.1.0",
+    "version_code": 3,
     "minimum_android_api": 28,
     "abi": "arm64-v8a",
     "debuggable": false,
     "certificate_sha256": "8fb17b2ff86d95cd2ec34345b0118dcb82c7f3927564d36ac2c2d8bf969fb7f2"
   },
   "apk": {
-    "apk": "Skate3-Pocket-0.1.1-arm64.apk",
-    "bytes": 41688621,
-    "sha256": "4eac564dfc8e8bc591f9e6c97c0c4790c5cda87894e2b8659754435996ec9b16",
+    "apk": "Skate3-Pocket-0.1.0-arm64.apk",
+    "bytes": 41688625,
+    "sha256": "8b878f6fe5a7500b4c9957b0c3a1e635297dad4da3fc3cff90ee569b00d88ad4",
     "verified_entries": {
       "lib/arm64-v8a/libmain.so": "5c952868cf4e5b15a6e6d6b228adf83c6b3633884ba0237f28264af4e5796a39",
       "lib/arm64-v8a/libvulkan.so": "f80c12ba07c70626e1953d9f6085172bf7ecc0d3538efe4227e439b3ade54c58",
@@ -51,11 +51,13 @@
     "adaptive_canvas_dp": 108,
     "artwork_inset_percent": 19.444444,
     "themed_icon": "Transparent native vector companion with handheld, numeral 3 and skateboard.",
-    "visual_checks": "Circle, rounded-square and themed previews inspected at 48, 72 and 96 pixels.",
+    "visual_checks": "Approved icon previews were inspected during the icon update. All packaged icon resources are byte-identical to that verified APK.",
     "monochrome_vector_sha256": "1427a350f6452e42f27f1afdf0ffcfc0302ae5668d4576b9b8ec8f8f8b00049c",
     "packaged_png_pixel_comparison": {
       "pngs_checked": 11,
-      "rgba_pixels_and_dimensions_identical_to_source": true
+      "rgba_pixels_and_dimensions_identical_to_source": true,
+      "verified_in_apk_sha256": "4eac564dfc8e8bc591f9e6c97c0c4790c5cda87894e2b8659754435996ec9b16",
+      "current_apk_icon_resources_byte_identical": true
     }
   },
   "verification": {
@@ -64,32 +66,40 @@
     "signature_verified": true,
     "alignment_16k_verified": true,
     "device_tested_for_this_release": false,
-    "scope": "Icon and version update. Static APK comparison and launcher artwork previews; no device gameplay or performance test was run for 0.1.1.",
+    "scope": "Consolidated 0.1.0, internal build 3, with the approved updated icon. Release build, lint, signing, alignment, manifest, DEX and packaged-resource comparisons passed. No device gameplay or performance test was run for this refreshed APK.",
     "baseline_release_comparison": {
-      "release": "pocket-v0.1.0",
-      "baseline_apk_sha256": "e5e4c5061088734140f4962416dd486779d99cf61d84fa74f69f6dcab6758b43",
+      "release": "superseded pocket-v0.1.1",
+      "baseline_apk_sha256": "4eac564dfc8e8bc591f9e6c97c0c4790c5cda87894e2b8659754435996ec9b16",
       "same_application_id_and_signing_certificate": true,
       "native_engine_and_driver_assets_byte_identical": true,
-      "baseline_dex_classes": 3363,
+      "baseline_dex_classes": 3364,
       "candidate_dex_classes": 3364,
-      "identical_classes_after_index_and_offset_normalization": 3358,
+      "identical_classes_after_index_and_offset_normalization": 3361,
       "version_only_class_changes": [
         "com/nakas/skate3/AboutActivity",
         "com/nakas/skate3/BuildConfig",
         "com/nakas/skate3/Diagnostics"
       ],
-      "generated_icon_resource_class_changes": [
-        "androidx/core/R$drawable",
-        "com/nakas/skate3/R$mipmap"
-      ],
-      "generated_icon_resource_class_added": "com/nakas/skate3/R$drawable",
       "gameplay_controller_and_driver_logic_changes": false,
-      "unchanged_non_icon_resource_configurations": 169,
+      "packaged_resource_entries_byte_identical": 91,
       "manifest_changes": [
-        "versionCode: 1 to 2",
-        "versionName: 0.1.0 to 0.1.1",
-        "roundIcon: ic_launcher to ic_launcher_round"
+        "versionCode: 2 to 3",
+        "versionName: 0.1.1 to 0.1.0"
+      ],
+      "additional_generated_metadata_changes": [
+        "META-INF/version-control-info.textproto",
+        "assets/dexopt/baseline.prof"
       ]
     }
-  }
+  },
+  "replaces": [
+    {
+      "version_name": "0.1.0",
+      "version_code": 1
+    },
+    {
+      "version_name": "0.1.1",
+      "version_code": 2
+    }
+  ]
 }
