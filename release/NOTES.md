@@ -44,6 +44,38 @@ antialiasing. Change one setting at a time.
 
 ## New in this release
 
+**0.1.19 — the handhelds that never loaded the world now do.** Three devices
+built on the same Qualcomm chip, an AYN Thor, a Retroid Pocket 6 and an AYN
+Odin2 Portal, had never once reached the skatepark on any build. They sat on a
+menu forever. The cause turned out to have nothing to do with those devices'
+graphics or audio, and everything to do with how the game's title update is
+applied.
+
+Applying that update means shifting blocks of the game's code and data to new
+positions in memory. Ninety-two of those shifts move a block onto a region that
+overlaps where it already sits. The code used a copy that is only correct when
+the two regions do not touch, and Android chooses its copying routine to suit
+the processor, so the same app assembled a different executable depending on the
+phone. On these three handhelds one of the scrambled blocks held the table the
+game uses to find its audio decoders, so audio setup failed and the world never
+loaded. The rest of the scrambled blocks are where the crashes and the strange
+buffer sizes in earlier reports came from. One cause, not four.
+
+The copy now handles overlap correctly. This is verified in both directions: it
+repairs the broken devices, and on a phone that already worked the assembled
+executable is byte-for-byte what it was before. The Retroid Pocket 6 and the AYN
+Thor have both confirmed the game running.
+
+The loader also logs a fingerprint of the executable after it is unpacked and
+again after the update is applied, so a diagnostic report now says outright
+whether that phone assembled the game correctly.
+
+Two other fixes ride along. Reads from the game folder are no longer allowed to
+stop early, which they may legitimately do on some Android storage; a partial
+read used to be handed to the game as if it were complete. And choosing a
+skater's name could crash, because the on-screen keyboard could be dismissed
+before the engine had finished connecting it to the game's request.
+
 **0.1.18 — the static-image write watch, robust file reads, and the name-prompt
 crash.** Three QCS8550 handhelds (AYN Thor, Retroid Pocket 6, AYN Odin2 Portal)
 never load the world: a table of codec tags in the game's static data is found
