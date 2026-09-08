@@ -1,5 +1,7 @@
 # Skate 3 on Android
 
+Download the release apk here https://github.com/andrewnakas/skate3-android/
+
 The Android shell for the Skate 3 native recompilation. The game itself — the
 recompiled Xbox 360 executable, the rexglue runtime, and the native Vulkan
 scene renderer — lives in the engine tree at `~/skate3/skate3recomp-dev` on the
