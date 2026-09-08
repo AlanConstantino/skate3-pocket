@@ -1,0 +1,4 @@
+# Puts a Sponsor button on the repository page and in the sidebar.
+# GitHub Sponsors is not set up here; the custom entry points at the same PayPal
+# donation link the README and the release notes use.
+custom: ["https://www.paypal.com/donate/?hosted_button_id=VN7FLF8AKZR4Y"]
