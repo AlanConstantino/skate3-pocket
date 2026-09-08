@@ -272,3 +272,10 @@ own game files, since the recompiler consumes them. See the repository README.
 Built on the Skate 3 native recompilation and the rexglue SDK, which is derived
 from Xenia's Xbox 360 research. The Android shell, platform work and tuning in
 this release are new; the iOS port shares the same engine.
+
+## Supporting the project
+
+If you like this software, you can support the work with a donation. It is
+entirely optional and everything here stays free either way.
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=VN7FLF8AKZR4Y)

@@ -89,3 +89,10 @@ Built and measured on a Galaxy S23 FE: Snapdragon 8 Gen 1, Adreno 730, 8 GB,
 Android 16. arm64 only, Vulkan only. The `android-arm64-release` preset tunes
 the guest code for that CPU; `android-arm64-generic` builds the same thing for
 any 64-bit phone from about 2018 onward and is what a shared APK should use.
+
+## Supporting the project
+
+If you like this software, you can support the work with a donation. It is
+entirely optional and everything here stays free either way.
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=VN7FLF8AKZR4Y)
