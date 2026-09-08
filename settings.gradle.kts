@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Skate3"
+rootProject.name = "Skate3Pocket"
 include(":app")

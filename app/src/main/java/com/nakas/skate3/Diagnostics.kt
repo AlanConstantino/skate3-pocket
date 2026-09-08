@@ -37,6 +37,8 @@ object Diagnostics {
         appendLine("App ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
         appendLine("Engine ${engineVersion(context)}")
         appendLine("Native library ${nativeLibraryDescription(context)}")
+        appendLine("Application ID ${context.packageName}")
+        appendLine(DriverBridge.diagnostic(context))
         appendLine()
 
         appendLine(section("Device"))
@@ -45,7 +47,11 @@ object Diagnostics {
         // The distinction the report is often being read for: a custom ROM
         // reports a different build fingerprint from the vendor's own.
         appendLine("Build ${Build.FINGERPRINT}")
-        appendLine("SoC ${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}")
+        if (Build.VERSION.SDK_INT >= 31) {
+            appendLine("SoC ${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}")
+        } else {
+            appendLine("SoC ${Build.HARDWARE}")
+        }
         appendLine("ABIs ${Build.SUPPORTED_ABIS.joinToString()}")
         appendLine("CPUs ${Runtime.getRuntime().availableProcessors()}")
         appendLine(cpuClusters())

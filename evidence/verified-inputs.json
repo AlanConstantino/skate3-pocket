@@ -1,0 +1,52 @@
+{
+  "official-v0.1.19.apk": {
+    "bytes": 90414506,
+    "sha256": "cd9eacda621828a9e9bfe93b80749253bd33a59af14d64ab3e615ccfbcee900f"
+  },
+  "native/libmain.so": {
+    "bytes": 85759392,
+    "sha256": "5c952868cf4e5b15a6e6d6b228adf83c6b3633884ba0237f28264af4e5796a39"
+  },
+  "mrpurple-t30.zip": {
+    "bytes": 3713730,
+    "sha256": "f65b2d3353fd4aa7190bb5426b94468e99ffea7a58a830bc0c4651db89353227"
+  },
+  "nakas-shell-v019.tar.gz": {
+    "bytes": 166080,
+    "sha256": "3a9232bf404bef9bf80dbf4ab9405ea9325b5d57524889f441287191279ad6bb"
+  },
+  "sdl-8bf3b7215.tar.gz": {
+    "bytes": 15977394,
+    "sha256": "bb4f83f5d6041c3a22186cdac4e15ed71e4127a1a8532dbb382f4b730a334b61"
+  },
+  "T30 metadata": {
+    "schemaVersion": 1,
+    "name": "Turnip Adreno Driver T30 (@Mr_Purple_666)",
+    "description": "Open-source Vulkan driver build, MrPurple still alive. Big thanks to DISKDVD",
+    "author": "Mr_Purple_666",
+    "packageVersion": "T30",
+    "vendor": "Mesa",
+    "driverVersion": "26.3.0-T30-1.4.359",
+    "minApi": 30,
+    "libraryName": "vulkan.purple.so"
+  },
+  "T30 binary version strings": [
+    " (git-62ac221a33)/unknown",
+    "PurpleVK 26.3.0-devel (git-62ac221a33)",
+    "26.3.0-devel (git-62ac221a33)"
+  ],
+  "engine identification": {
+    "sdl_revision": "SDL-3.5.0-release-3.4.0-428-g8bf3b7215",
+    "embedded_game_build": "2.6.0.24-dev.g05a60fa",
+    "ffmpeg_source_strings_present": true,
+    "ffmpeg_version_configuration_or_license_string_found": false
+  },
+  "andrew_app_v019_tree_sha": "7941aed3a0b39cf78f54f8c6ea5ca6ee7430bf5c",
+  "runtime_source_reference": {
+    "repository": "https://github.com/andrewnakas/rexglue-skate3",
+    "commit": "7eb0faf7787f5e01333c228b8e3f03c32f7295ea",
+    "ffmpeg_gitlink": "0604b464c7cb4ebc94940cf1f324a3b26b87717c",
+    "sdl_gitlink": "8bf3b7215ad9fc3deb583c6a3a37c6c67f2e24e4",
+    "match_to_entire_preserved_engine": "not established; SDL version matches exactly"
+  }
+}

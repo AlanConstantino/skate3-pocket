@@ -6,9 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
+import android.view.InputDevice
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import org.libsdl.app.SDLActivity
+import org.libsdl.app.SDLControllerManager
 
 /**
  * The game itself.
@@ -19,6 +22,13 @@ import org.libsdl.app.SDLActivity
  * Java for: the system document picker, and relaunching after a setting change.
  */
 class Skate3Activity : SDLActivity() {
+
+    override fun loadLibraries() {
+        // SDL calls this after Activity.onCreate, inside its visible startup
+        // error handler, and before it resolves any engine entry point.
+        DriverBridge.initialize(this)
+        super.loadLibraries()
+    }
 
     /**
      * One shared object. SDL3 and the rexglue runtime are linked statically
@@ -70,6 +80,20 @@ class Skate3Activity : SDLActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemBars()
+    }
+
+    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        // The surface normally handles sticks. A focused text-input view can
+        // leave joystick events unhandled; Android then converts X/Y into
+        // D-pad keys and drops the right stick. This Activity fallback runs
+        // only after the views decline the event, so SDL receives it once.
+        if (!SDLActivity.mBrokenLibraries &&
+            event.isFromSource(InputDevice.SOURCE_CLASS_JOYSTICK) &&
+            SDLControllerManager.handleJoystickMotionEvent(event)
+        ) {
+            return true
+        }
+        return super.onGenericMotionEvent(event)
     }
 
     private fun hideSystemBars() {

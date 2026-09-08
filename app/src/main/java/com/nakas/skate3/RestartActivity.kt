@@ -20,6 +20,8 @@ class RestartActivity : Activity() {
         // A moment for the game process to finish exiting. Starting a
         // singleTask activity while the old instance is still alive would be
         // delivered to it as onNewIntent instead of launching anything.
+        // The manifest uses a translucent theme: Theme.NoDisplay requires
+        // finish() before onResume completes and crashes during this delay.
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, SetupActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

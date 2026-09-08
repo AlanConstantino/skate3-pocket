@@ -1,100 +1,68 @@
-# Skate 3 on Android
+# Skate 3 Pocket
 
-Download the release apk here https://github.com/andrewnakas/skate3-android/releases
+[Download the APK](https://github.com/AlanConstantino/skate3-pocket/releases/latest) · [Build from source](docs/BUILDING.md) · [Report a problem](https://github.com/AlanConstantino/skate3-pocket/issues)
 
-The Android shell for the Skate 3 native recompilation. The game itself — the
-recompiled Xbox 360 executable, the rexglue runtime, and the native Vulkan
-scene renderer — lives in the engine tree at `~/skate3/skate3recomp-dev` on the
-`android` branch. This repository holds only what Android needs: an activity to
-host SDL, a setup screen for the game data, and the scripts that build, deploy
-and measure.
+An unofficial Android fork of [Andrew Nakas's Skate 3 Android](https://github.com/andrewnakas/skate3-android), focused on handheld controls and easy GPU driver switching.
 
-**No game content is here and none is downloaded.** You supply your own Skate 3
-Xbox 360 disc image and Title Update 3.
+Skate 3 Pocket builds on Andrew's working **v0.1.19** release. It adds a Turnip driver manager, controller fixes tested on the Retroid Pocket 6, and reliable restarts when changing drivers. The native game engine is preserved from Andrew's release.
 
-## What this is
+You must provide your own legally obtained Xbox 360 copy of Skate 3. No retail game files are bundled with the app.
 
-Not an emulator. The game's PowerPC code was translated ahead of time into C++
-and compiled for ARM64, so the skating, physics and career mode are the retail
-game's own code running natively. The Xbox 360 GPU is not emulated either
-during gameplay: a native renderer reads the game's scene state and draws it
-through Vulkan directly.
+## Install
 
-## Layout
+Download the APK from this repository's Releases page. The app appears as **Skate 3 Pocket** and requires Android 9 or newer, ARM64, and Vulkan. Bundled T30 requires Android 11 or newer and a compatible Adreno GPU. Custom Turnip support has been checked on the Retroid Pocket 6; device and driver compatibility varies.
 
-| Path | What |
-|---|---|
-| `app/src/main/java/com/nakas/skate3/` | The four classes: setup, the game activity, the restart helper, and where the files live |
-| `app/src/main/jniLibs/arm64-v8a/libmain.so` | Built by `scripts/build_native.sh`, not by Gradle. Not in version control |
-| `android_args/` | Tuning profiles pushed to the phone without rebuilding |
-| `scripts/` | Toolchain setup, build, install, logs, performance |
-| `logs/` | Pulled logs, one directory per run |
+Provide your own Xbox 360 disc image and the supported Title Update 3 through the setup screen. Allow about 7 GB for extracted game data.
 
-Gradle never runs CMake. The native build is 7.7 million lines of recompiled
-PowerPC and takes hours; hiding that inside an APK build would also bypass the
-memory throttling it needs on a laptop. The two are separate on purpose:
-`build_native.sh` once, `build_apk.sh` as often as you like.
+The public package is `io.github.alanconstantino.skate3pocket`. It installs separately from Andrew's app and earlier private test builds. Android does not automatically transfer their saves or game files; keep your existing installation until you have copied or reinstalled the data you need.
 
-## Building
+## GPU driver switching
 
-```sh
-scripts/setup_sdk.sh        # once: command-line tools, platform, build tools, NDK
-scripts/build_native.sh     # hours. Safe to leave; it pauses when memory is short
-scripts/build_apk.sh
-scripts/install.sh
-```
+Keep multiple compatible Android ARM64 Turnip drivers installed and switch between them from the launcher. Bundled **MrPurple T30** and your device's **System GPU driver** remain available.
 
-`local.properties` names the SDK and the engine tree. Both are machine-specific
-and neither is in version control.
+1. Open **GPU driver** on the launcher.
+2. Tap **Import driver ZIP…** and select a compatible Turnip ZIP. Leave the ZIP compressed.
+3. Highlight the driver and tap **Apply and restart**.
+4. Use **Check selected driver** to confirm that it loads, then press **PLAY**.
 
-## Getting the game onto the phone
+Driver changes do not require another APK. To remove an imported driver, apply another driver and restart first, then return to the manager and choose **Remove highlighted driver**.
 
-Two routes.
+The importer checks the archive, metadata, ARM64 libraries, and file integrity before installing it. These checks cannot guarantee that every Turnip release performs well with the game. If a driver fails, reopen the launcher and apply T30 or System.
 
-**From a disc image, on the phone.** Launch the app, choose *Install from a
-disc image*, and pick your own image and then the title update. The engine
-reads them through the system document picker and extracts about 6 GB into its
-own directory. Nothing needs a storage permission.
+## Tested on Retroid Pocket 6
 
-**From this machine, over the cable.** If the disc is already extracted here:
+The driver manager was tested on a 12 GB Retroid Pocket 6 running Android 13. Verification covered imports, removal, failed-import recovery, saved selections, and switching between T30, imported Turnip R7, and System. All three passed native driver initialization checks.
 
-```sh
-scripts/push_game_data.sh
-```
+The import and selection tests passed **25 cases and 428 assertions**. The working native engine and controller implementation were preserved during the driver-manager update. This verification did not establish which driver delivers the best frame rate.
 
-That copies roughly 6 GB to `/sdcard/Android/data/com.nakas.skate3/files/game`.
-It is slower than extracting on the phone, but it skips the picker entirely,
-which is what you want when reinstalling the app repeatedly.
+## Credits
 
-## Tuning and measuring
+This project builds on the work of the following developers and projects:
 
-The engine reads `files/user/android_args.txt` at startup. One argument per
-line; any key there beats the compiled-in default with no rebuild.
+- **[Andrew Nakas — Skate 3 Android](https://github.com/andrewnakas/skate3-android):** the Android application, platform work, and v0.1.19 engine release used by this project.
+- **[Alex McHugh — Skate3Recomp](https://github.com/mchughalex/skate3recomp):** the Skate 3 recompilation and native renderer.
+- **[Alex McHugh's Skate-specific ReXGlue runtime](https://github.com/mchughalex/rexglue-skate3)** and **[Andrew's runtime fork](https://github.com/andrewnakas/rexglue-skate3):** the Skate-specific runtime lineage.
+- **[ReXGlue](https://github.com/rexglue/rexglue-sdk)** and **[Xenia](https://github.com/xenia-project/xenia):** the recompilation tools, runtime foundations, and Xbox 360 research.
+- **[Mesa / Turnip](https://docs.mesa3d.org/drivers/freedreno.html), MrPurple, and other driver contributors:** the Vulkan drivers that make custom driver selection useful. MrPurple's T30 is the bundled driver.
+- **[Billy Laws — libadrenotools](https://github.com/bylaws/libadrenotools)** and its linker namespace support: loading compatible custom Adreno drivers inside the app.
+- **[SDL](https://www.libsdl.org/)** and the other upstream dependencies: input, audio, windowing, and supporting infrastructure.
 
-```sh
-scripts/push_args.sh android_args/diagnostics.txt
-scripts/perf.sh          # frame pacing, memory, thermal state
-scripts/logs.sh          # follow the live log
-scripts/logs.sh --pull   # collect the log files after a run
-```
+Alan Constantino maintains the additions in this variant, including the driver manager and Retroid Pocket 6 integration and testing. The original game, recompilation, renderer, drivers, and upstream platform work remain credited to their respective creators.
 
-`android_args/README.md` explains the profiles and, more usefully, which of the
-iOS settings deliberately did not come across.
+## Build and provenance
 
-When a native crash appears in logcat, `scripts/symbolize.sh` turns the
-addresses into function names using the unstripped library kept in the build
-directory.
+The [build guide](docs/BUILDING.md) documents the required tools and reproducible input preparation. The build compiles this fork's Android shell and Vulkan loader around the exact native engine from Andrew's v0.1.19 APK; it does not rebuild that engine from its complete source tree. The input versions and checksums are pinned in the source lock file.
 
-## Target
+Original upstream documentation is retained in [README-upstream.md](docs/README-upstream.md). Component notices and available source references are preserved in this repository and in the app's **About Skate 3 Pocket** screen. Upstream components retain their own copyright and licensing terms.
 
-Built and measured on a Galaxy S23 FE: Snapdragon 8 Gen 1, Adreno 730, 8 GB,
-Android 16. arm64 only, Vulkan only. The `android-arm64-release` preset tunes
-the guest code for that CPU; `android-arm64-generic` builds the same thing for
-any 64-bit phone from about 2018 onward and is what a shared APK should use.
+## Support Skate 3 Pocket
 
-## Supporting the project
+If Skate 3 Pocket is useful to you, you can support **Alan Constantino's development, maintenance, and testing of this fork** through PayPal. Donations are optional, and the app remains free.
 
-If you like this software, you can support the work with a donation. It is
-entirely optional and everything here stays free either way.
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?business=constantinoalan98%40gmail.com&item_name=Skate%203%20Pocket%20development&currency_code=USD)
 
-[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=VN7FLF8AKZR4Y)
+PayPal: **@alanconstantino**
+
+---
+
+Skate 3 is a game by EA Black Box / Electronic Arts. Skate 3 Pocket is an unofficial community project.

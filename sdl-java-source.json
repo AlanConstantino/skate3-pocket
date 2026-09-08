@@ -1,0 +1,49 @@
+{
+  "revision": "8bf3b7215ad9fc3deb583c6a3a37c6c67f2e24e4",
+  "files": [
+    {
+      "path": "org/libsdl/app/HIDDevice.java",
+      "sha256": "afdeaf583f051583eff5cc9dcbfb983e3e8923e66d1130ff3e30c21afc8f87f1"
+    },
+    {
+      "path": "org/libsdl/app/HIDDeviceBLESteamController.java",
+      "sha256": "fef49fde92e72c8d849a8c6a5cad4d4b4bf9e8e747ec504ac310e461f7aa0179"
+    },
+    {
+      "path": "org/libsdl/app/HIDDeviceManager.java",
+      "sha256": "32bfca75a88f4b8939dbee3e3f697a3c9c580489b762a24b8c404092eee28422"
+    },
+    {
+      "path": "org/libsdl/app/HIDDeviceUSB.java",
+      "sha256": "45a1ecd525bd700adbfe529737fe95cce4b449730fc80fcee7bfebe56200550c"
+    },
+    {
+      "path": "org/libsdl/app/SDL.java",
+      "sha256": "49d13bd76b65b40bc13b8f4ff1333ecf9fc5473a57bb2d216e2a60dc2e5973a4"
+    },
+    {
+      "path": "org/libsdl/app/SDLActivity.java",
+      "sha256": "93595f176fedc6a87146545510bc3163efd5a7177df1f2c91f2882890048effe"
+    },
+    {
+      "path": "org/libsdl/app/SDLAudioManager.java",
+      "sha256": "129990250d389bc6550c1a27a81ee9a4cc32a4d6e9080f2fe466480988f214eb"
+    },
+    {
+      "path": "org/libsdl/app/SDLControllerManager.java",
+      "sha256": "b8fc0195d11f64ef6123418446de098cac02dacec2601c7be214ccf4e43e3811"
+    },
+    {
+      "path": "org/libsdl/app/SDLDummyEdit.java",
+      "sha256": "fb777fa4b4cce4d328229014acf156c2c2f47445dacccd5f74f876a64cdf502b"
+    },
+    {
+      "path": "org/libsdl/app/SDLInputConnection.java",
+      "sha256": "7079f65944ce0f6e8e3ca0293fc79c1e4e050f3b4290c39990723e3a0e40bc9b"
+    },
+    {
+      "path": "org/libsdl/app/SDLSurface.java",
+      "sha256": "01bc47885f4ef7ea7f53636e6be9300306770d879605fb140c30bed030dbd5bb"
+    }
+  ]
+}

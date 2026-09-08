@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "upstream_app": {
+    "repository": "https://github.com/andrewnakas/skate3-android",
+    "tag": "v0.1.19",
+    "source_commit": "7941aed3a0b39cf78f54f8c6ea5ca6ee7430bf5c",
+    "note": "The published v0.1.19 native library is preserved; this build does not reconstruct the upstream game engine.",
+    "fork_base_commit": "9d89f39c7096814542b4a87540357de2c9ce2419"
+  },
+  "toolchain": {
+    "ndk": "27.2.12479018",
+    "android_abi": "arm64-v8a",
+    "android_api": 28,
+    "java_major": 17,
+    "cmake_minimum": "3.22",
+    "generator": "Ninja"
+  },
+  "downloads": {
+    "official_engine_apk": {
+      "filename": "official-v0.1.19.apk",
+      "url": "https://github.com/andrewnakas/skate3-android/releases/download/v0.1.19/Skate3-Android-v0.1.19.apk",
+      "sha256": "cd9eacda621828a9e9bfe93b80749253bd33a59af14d64ab3e615ccfbcee900f",
+      "bytes": 90414506
+    },
+    "bundled_turnip": {
+      "filename": "mrpurple-t30.zip",
+      "url": "https://github.com/MrPurple666/purple-turnip/releases/download/vturnip_mrpurple_T30-toasted.adpkg/turnip_mrpurple_T30-toasted.adpkg.zip",
+      "sha256": "f65b2d3353fd4aa7190bb5426b94468e99ffea7a58a830bc0c4651db89353227",
+      "bytes": 3713730
+    }
+  },
+  "engine": {
+    "archive_member": "lib/arm64-v8a/libmain.so",
+    "destination": "app/src/main/jniLibs/arm64-v8a/libmain.so",
+    "sha256": "5c952868cf4e5b15a6e6d6b228adf83c6b3633884ba0237f28264af4e5796a39",
+    "bytes": 85759392
+  },
+  "bundled_turnip": {
+    "destination": "app/src/main/assets/drivers/turnip-t30.zip",
+    "library_name": "vulkan.purple.so",
+    "library_sha256": "1d80dfa019659b008e4669311db5b1e4a02af59ff1d5458a98e2f5fe18ed013b",
+    "metadata_sha256": "bf6c432ffd05a254a9531920f6ec826abb2bcf91c52a0c5467167a0ee1940f73",
+    "release": "https://github.com/MrPurple666/purple-turnip/releases/tag/vturnip_mrpurple_T30-toasted.adpkg"
+  },
+  "vendored_repositories": [
+    {
+      "directory": "native/vendor/libadrenotools",
+      "repository": "https://github.com/bylaws/libadrenotools",
+      "commit": "8fae8ce254dfc1344527e05301e43f37dea2df80",
+      "license": "native/vendor/libadrenotools/LICENSE"
+    },
+    {
+      "directory": "native/vendor/libadrenotools/lib/linkernsbypass",
+      "repository": "https://github.com/bylaws/liblinkernsbypass",
+      "commit": "aa3975893d83ef1bc84c321ec60c65fbf1287887",
+      "license": "native/vendor/libadrenotools/lib/linkernsbypass/LICENSE"
+    },
+    {
+      "directory": "sdl-java",
+      "repository": "https://github.com/libsdl-org/SDL",
+      "commit": "8bf3b7215ad9fc3deb583c6a3a37c6c67f2e24e4",
+      "upstream_directory": "android-project/app/src/main/java",
+      "note": "Vendored Java matches the SDL ABI in the official native library."
+    }
+  ],
+  "vendored_files_sha256": {
+    "native/CMakeLists.txt": "ae87f64e579da0afc9effade31b6f1caf795cb5bc80ace2af1b9ba9a9a2270cd",
+    "native/driver_proxy.cpp": "2430eb8c499ccc684f8c44e7efea2b7526c76ed3ac4cd4cd0818470727a045cb",
+    "native/exports.map": "02d37a6ec9922049acb4d3e0967c956613d06d07be52e9e44596491a2982c34a",
+    "native/vendor/libadrenotools/.gitmodules": "3d25098a2ffbf5491cdafed3216404b2be3fc4417ce0009e2e34b4d0ff87e093",
+    "native/vendor/libadrenotools/CMakeLists.txt": "47526f5e840e03548fff1e2a557d7afd93603e5e06709e6bd2bb81af8dbfbfbe",
+    "native/vendor/libadrenotools/LICENSE": "7ea796e199e46093c2f5c391697bce5abeacd02b7216aa0a84e5839afb5584f3",
+    "native/vendor/libadrenotools/README.md": "fb7e29127d16fc150a7b7cd95f1024b3cbec985a2d2ef12e23982e4881c96d0b",
+    "native/vendor/libadrenotools/adrenotools.pc.in": "9351f130adeeb9c3ae2e7ec8ae7d48990cb12906273ee4646d424c0e29515dc7",
+    "native/vendor/libadrenotools/build_asm.sh": "89e2ee44514fb71d15055bf8ceff91ddbd7332684f21b83ba7fd7e879cda1413",
+    "native/vendor/libadrenotools/gen/bcenabler_patch.h": "4add3192dcb3d9055d6b275a514d9d96f1cc6266bce16853f8fb5a05b8645b76",
+    "native/vendor/libadrenotools/include/adrenotools/bcenabler.h": "c673107d06852b1266627c701297a3dc64ac6f1cb2933dbf9bc8b00bf2fd355a",
+    "native/vendor/libadrenotools/include/adrenotools/driver.h": "fbcb34b75758a708058942d798c506065d362c9fa8e78371d9f2a76d6bceebdf",
+    "native/vendor/libadrenotools/include/adrenotools/priv.h": "dfddff2cff43ec1154ad2e064fd9ba18bf671581f4ced927cec8e48fbe2173c3",
+    "native/vendor/libadrenotools/lib/linkernsbypass/CMakeLists.txt": "17d4901912615a8123f9a815b55887fc30154a74b4f52d35eb3468798c9c7150",
+    "native/vendor/libadrenotools/lib/linkernsbypass/LICENSE": "7ea796e199e46093c2f5c391697bce5abeacd02b7216aa0a84e5839afb5584f3",
+    "native/vendor/libadrenotools/lib/linkernsbypass/README.md": "a07c3669af0a3a738b4127547bed15a68c29b0038c743fa77fd7629f30534ef9",
+    "native/vendor/libadrenotools/lib/linkernsbypass/android_linker_ns.cpp": "1a5bcf834799f69be1520a7bf9af63da420fb923f227e130695939fe4f238060",
+    "native/vendor/libadrenotools/lib/linkernsbypass/android_linker_ns.h": "33943fcf302c09d7083a4c8f3e5660d76f13d5e34eacb404ba41e0250673fb60",
+    "native/vendor/libadrenotools/lib/linkernsbypass/elf_soname_patcher.cpp": "5c3b935d2e1f6a716991174145b7999759042feee3636bec56b1bc87de51943f",
+    "native/vendor/libadrenotools/lib/linkernsbypass/elf_soname_patcher.h": "8a431b3765c57aee5f82362688503cdcefef3eb9fe5d35f18029dc8a5320dac9",
+    "native/vendor/libadrenotools/src/bcenabler.cpp": "aa0d0d7d548bee5389437904841fee822e130f69a5c25130282ecec032782f92",
+    "native/vendor/libadrenotools/src/bcenabler_patch.s": "6187f5f85513295e15acdcce1cba24c72fb8adcde2caaea7c0f0cfc465f941ec",
+    "native/vendor/libadrenotools/src/driver.cpp": "93d0a7b5f741f42e5b728f8eed941f46a3fd9e09e275f33f22c910473ecde6d7",
+    "native/vendor/libadrenotools/src/hook/CMakeLists.txt": "1ff134d14bde530c818b90a3501ef50eedc9296e71a8b02d42f861d834828943",
+    "native/vendor/libadrenotools/src/hook/file_redirect_hook.c": "45df9f280b2d6deb31d886fb633e69b3e8dd268e5bcd63d8b1a01043d0adc30d",
+    "native/vendor/libadrenotools/src/hook/gsl_alloc_hook.c": "526438e98c041410872369efc7d4ba14a2af3337d6ab86c9b244d90b919a9f53",
+    "native/vendor/libadrenotools/src/hook/hook_impl.cpp": "37a2ecb380bf061b267ee5be014e19726655e79118a66123b2eb9acc646ffbe1",
+    "native/vendor/libadrenotools/src/hook/hook_impl.h": "ccd30d89b8056ddcb92242659b6e7c6b4da2079b4e8e04e7c7e5a59701438a48",
+    "native/vendor/libadrenotools/src/hook/hook_impl_params.h": "356749bc0b1f38775c06bee92668e97ea117293c3343f4e43ac5888b642479aa",
+    "native/vendor/libadrenotools/src/hook/kgsl.h": "258b127f4011c18496ea2557d57f58a8c2eeb7eb486d59ad949c8980a41aabc5",
+    "native/vendor/libadrenotools/src/hook/main_hook.c": "3a28fbad443f0e057f317d481610f9c2d04abcc4abe3252022af7e79ea25825e",
+    "native/vendor/libadrenotools/tools/ADPKG.md": "77dedb9cd4436c6dff64043c4bdb577e3ecb184377fe83bac9da964a0fe16aab",
+    "native/vendor/libadrenotools/tools/README.md": "e347f8314d01bbdfe4dbb781605fade532e749678c67cf35fd36831de95616fa",
+    "native/vendor/libadrenotools/tools/acc-shim/README.md": "90a3ee2f607c6d9ad4d07cd01ee855fafb4c6f834cc3bdd78b69ceb9f29ad701",
+    "native/vendor/libadrenotools/tools/acc-shim/vk_acc_shim.cpp": "325f630fb60874dbd50ae0d13e49f820a4cb064a26662406beae7090d679b30a",
+    "native/vendor/libadrenotools/tools/blob-patcher.py": "3e57f15570378d05181c4e9c69c47bf05bee0638eacd3518d803fd55587b43f0",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/.clang-format": "f2a9cc45670780b3c2a45a5cc9c19e94ecfdde30687e62c75c952586d77a00e7",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/Android.bp": "91f2cf1cddf66a2d3582c7422884c9c529ed45dffd9f794a65fea95987197a04",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/README.md": "ae69e3adfb85beae9f559198326ad5b45e2235084dde1cda06ec4970ec1d5be8",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/QtiGrallocDefs.h": "75ea6d84f7b77be2faf93747b3c867a54423e5dc762326abebd5aed16a1d731e",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/common.h": "f92de3482a97ddd71809e93aef1ce6c6463df4da099449b97f1fb26712c38318",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gr_adreno_info.cpp": "2879bc564c9105e6bca3b77585747a39c59c7bdb292f9562a2443c4d9d28e751",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gr_adreno_info.h": "5789c1affffa62c7246e670953355f1f6c9ea595936aeb9b58663b8903b4b594",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gr_priv_handle.h": "bddb0408af1296e01c39b4fdda5cefe58839a7062c8f031b859ee15950778d96",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gr_utils.cpp": "de0c79a67ed02661f81eb96e72a3b3a430a4160e5991175258a12202e39693d9",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gr_utils.h": "3be00c73dd6e445f0cccbe968ff446199243c5f5bdabb2b0ae97c33fc271feb7",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/gralloc_priv.h": "ae03a4f0571a0229a3b7c0be6a4cbe8e6fe849e4f217ea6a45a4ed85ec2c62a9",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/mapper.h": "5209f261c8a9562d11b00fc2cf05eec4401c0e98b15a84f9651007b1acafda20",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/mapperextensions.h": "0a4cdef0651157ef778309849ae5851418ac38b0f587e0dd599da8fb99f4fc75",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/types/common.h": "14eff0aea01a68b309e41f42ddac21fb0c107abc9a1e9b5a3433de03bd61381c",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/types/mapper.h": "8c9151ab725569e32a5eabd76bcd397904db36ddcc7edf2a69e62e8e6cf219d0",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/ext/types/mapperextensions.h": "de591ae6b191931ec0a62aa9f08a3e20ff852e53ecf0123f5e5a681722abc233",
+    "native/vendor/libadrenotools/tools/qtimapper-shim/shim.cpp": "ab5374b29c4b673a3fd720a0726bd671b51250006cefb3d998296f6fbdede46b",
+    "sdl-java/org/libsdl/app/HIDDevice.java": "afdeaf583f051583eff5cc9dcbfb983e3e8923e66d1130ff3e30c21afc8f87f1",
+    "sdl-java/org/libsdl/app/HIDDeviceBLESteamController.java": "fef49fde92e72c8d849a8c6a5cad4d4b4bf9e8e747ec504ac310e461f7aa0179",
+    "sdl-java/org/libsdl/app/HIDDeviceManager.java": "32bfca75a88f4b8939dbee3e3f697a3c9c580489b762a24b8c404092eee28422",
+    "sdl-java/org/libsdl/app/HIDDeviceUSB.java": "45a1ecd525bd700adbfe529737fe95cce4b449730fc80fcee7bfebe56200550c",
+    "sdl-java/org/libsdl/app/SDL.java": "49d13bd76b65b40bc13b8f4ff1333ecf9fc5473a57bb2d216e2a60dc2e5973a4",
+    "sdl-java/org/libsdl/app/SDLActivity.java": "93595f176fedc6a87146545510bc3163efd5a7177df1f2c91f2882890048effe",
+    "sdl-java/org/libsdl/app/SDLAudioManager.java": "129990250d389bc6550c1a27a81ee9a4cc32a4d6e9080f2fe466480988f214eb",
+    "sdl-java/org/libsdl/app/SDLControllerManager.java": "b8fc0195d11f64ef6123418446de098cac02dacec2601c7be214ccf4e43e3811",
+    "sdl-java/org/libsdl/app/SDLDummyEdit.java": "fb777fa4b4cce4d328229014acf156c2c2f47445dacccd5f74f876a64cdf502b",
+    "sdl-java/org/libsdl/app/SDLInputConnection.java": "7079f65944ce0f6e8e3ca0293fc79c1e4e050f3b4290c39990723e3a0e40bc9b",
+    "sdl-java/org/libsdl/app/SDLSurface.java": "01bc47885f4ef7ea7f53636e6be9300306770d879605fb140c30bed030dbd5bb"
+  }
+}

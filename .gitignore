@@ -9,3 +9,21 @@ logs/
 .idea/
 .DS_Store
 .kotlin/
+
+# Generated build inputs and release artifacts
+.pocket-build/
+app/src/main/assets/drivers/*.zip
+dist/
+*.aab
+*.idsig
+# Signing material stays outside this repository
+*.jks
+*.keystore
+*.p12
+*.pfx
+signing.properties
+.env
+.env.*
+
+__pycache__/
+*.pyc

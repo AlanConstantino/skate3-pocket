@@ -22,7 +22,7 @@
         android:appCategory="game"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
-        android:extractNativeLibs="false"
+        android:extractNativeLibs="true"
         android:theme="@style/Theme.Skate3">
 
         <!-- Lets `adb shell simpleperf` sample this process. Profiling only -
@@ -43,6 +43,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode" />
+        <activity
+            android:name=".DriverManagerActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode" />
         <!-- The game. singleTask because relaunching over a live session would
              abandon the SurfaceView the running SDL thread still holds. -->
         <activity
@@ -83,7 +93,7 @@
             android:name=".RestartActivity"
             android:exported="false"
             android:process=":restart"
-            android:theme="@android:style/Theme.NoDisplay"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true" />
     </application>
 </manifest>

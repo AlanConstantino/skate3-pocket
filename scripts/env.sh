@@ -6,7 +6,7 @@ export ANDROID_SDK_ROOT="$ANDROID_HOME"
 export NDK_VER="${NDK_VER:-28.2.13676358}"
 export ANDROID_NDK_HOME="${ANDROID_NDK_HOME:-$ANDROID_HOME/ndk/$NDK_VER}"
 export ANDROID_NDK_ROOT="$ANDROID_NDK_HOME"
-export ENGINE="${ENGINE:-/Users/nakas/skate3/skate3recomp-dev}"
+export ENGINE="${ENGINE:-$HOME/skate3/skate3recomp-dev}"
 export PRESET="${PRESET:-android-arm64-release}"
 export BUILD_DIR="$ENGINE/out/build/$PRESET"
 # Whatever single device is plugged in, rather than one hardcoded phone -
@@ -38,7 +38,7 @@ if [ -z "${SERIAL:-}" ]; then
   fi
 fi
 export SERIAL="${SERIAL:-}"
-export PKG="${PKG:-com.nakas.skate3}"
+export PKG="${PKG:-io.github.alanconstantino.skate3pocket}"
 export FILES="/sdcard/Android/data/$PKG/files"
 export APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
